@@ -79,20 +79,42 @@ local function saveKey(gameId, key, expires)
     writefile(keyFile, HttpService:JSONEncode(keyData))
 end
 
--- Verify key with Discord Bot (placeholder - will be replaced with actual endpoint)
+-- Verify key with GitHub-hosted database
 local function verifyKey(key, gameId)
-    -- TODO: Replace with actual Discord Bot API endpoint
-    -- For now, this is a placeholder that always returns false
-    -- Once Discord Bot is set up, this will make a real API call
-    
     local success, response = pcall(function()
-        -- Example API call structure (will be implemented with Discord Bot):
-        -- return game:HttpGet("https://your-bot-api.com/verify?key=" .. key .. "&game=" .. gameId)
-        return "invalid"
+        local keysUrl = "https://raw.githubusercontent.com/hikarii-dev/AetherHub-Release/main/api/keys.json"
+        local data = game:HttpGet(keysUrl)
+        return HttpService:JSONDecode(data)
     end)
     
-    if success and response == "valid" then
-        return true, "never" -- or return actual expiry time from API
+    if not success then
+        warn("[Aether Hub] Failed to fetch keys database:", response)
+        return false, nil
+    end
+    
+    -- Check if key exists
+    if response.keys[key] then
+        local keyData = response.keys[key]
+        
+        -- Check if key is active
+        if keyData.status ~= "active" then
+            return false, nil
+        end
+        
+        -- Check if expired
+        if keyData.expires then
+            if os.time() > keyData.expires then
+                return false, nil -- Expired
+            end
+        end
+        
+        -- Check HWID if set
+        if keyData.hwid and keyData.hwid ~= HWID then
+            return false, nil -- Key bound to different PC
+        end
+        
+        -- Valid key!
+        return true, keyData.expires or "never"
     end
     
     return false, nil
