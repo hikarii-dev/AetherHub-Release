@@ -79,42 +79,22 @@ local function saveKey(gameId, key, expires)
     writefile(keyFile, HttpService:JSONEncode(keyData))
 end
 
--- Verify key with GitHub-hosted database
+-- Verify key with Railway-hosted API
 local function verifyKey(key, gameId)
     local success, response = pcall(function()
-        local keysUrl = "https://raw.githubusercontent.com/hikarii-dev/AetherHub-Release/main/api/keys.json"
-        local data = game:HttpGet(keysUrl)
+        -- ЗАМЕНИ ЭТОТ URL НА СВОЙ ОТ RAILWAY!
+        local apiUrl = "https://discord-production-215b.up.railway.app/verify?key=" .. key .. "&game=" .. gameId
+        local data = game:HttpGet(apiUrl)
         return HttpService:JSONDecode(data)
     end)
     
     if not success then
-        warn("[Aether Hub] Failed to fetch keys database:", response)
+        warn("[Aether Hub] Failed to verify key:", response)
         return false, nil
     end
     
-    -- Check if key exists
-    if response.keys[key] then
-        local keyData = response.keys[key]
-        
-        -- Check if key is active
-        if keyData.status ~= "active" then
-            return false, nil
-        end
-        
-        -- Check if expired
-        if keyData.expires then
-            if os.time() > keyData.expires then
-                return false, nil -- Expired
-            end
-        end
-        
-        -- Check HWID if set
-        if keyData.hwid and keyData.hwid ~= HWID then
-            return false, nil -- Key bound to different PC
-        end
-        
-        -- Valid key!
-        return true, keyData.expires or "never"
+    if response.valid then
+        return true, response.expires or "never"
     end
     
     return false, nil
