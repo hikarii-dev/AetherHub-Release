@@ -82,7 +82,6 @@ end
 -- Verify key with Railway-hosted API
 local function verifyKey(key, gameId)
     local success, response = pcall(function()
-        -- ЗАМЕНИ ЭТОТ URL НА СВОЙ ОТ RAILWAY!
         local apiUrl = "https://discord-production-215b.up.railway.app/verify?key=" .. key .. "&game=" .. gameId
         local data = game:HttpGet(apiUrl)
         return HttpService:JSONDecode(data)
@@ -101,17 +100,18 @@ local function verifyKey(key, gameId)
 end
 
 -- Load game script
-local function loadGame(game)
+local function loadGame(gameData)
     Rayfield:Notify({
         Title = "Loading Game",
-        Content = "Loading " .. game.name .. "...",
+        Content = "Loading " .. gameData.name .. "...",
         Duration = 2,
     })
     
     task.wait(0.5)
     
     local success, err = pcall(function()
-        loadstring(game:HttpGet(game.script))()
+        local scriptCode = game:HttpGet(gameData.script, true)
+        loadstring(scriptCode)()
     end)
     
     if success then
