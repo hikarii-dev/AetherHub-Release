@@ -289,7 +289,7 @@ end
 local function Notify(title, msg, dur)
     local notif = Instance.new("Frame")
     notif.Size = UDim2.new(0, 270, 0, 65)
-    notif.Position = UDim2.new(1, -280, 0, 10)
+    notif.Position = UDim2.new(1, -280, 1, -75)
     notif.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     notif.BorderSizePixel = 0
     notif.Parent = ScreenGui
@@ -304,7 +304,7 @@ local function Notify(title, msg, dur)
     nt.BackgroundTransparency = 1
     nt.Text = title
     nt.TextColor3 = Color3.fromRGB(255, 255, 255)
-    nt.TextSize = 24
+    nt.TextSize = 22
     nt.Font = Enum.Font.GothamBold
     nt.TextXAlignment = Enum.TextXAlignment.Left
     nt.Parent = notif
@@ -315,7 +315,7 @@ local function Notify(title, msg, dur)
     nm.BackgroundTransparency = 1
     nm.Text = msg
     nm.TextColor3 = Color3.fromRGB(170, 170, 170)
-    nm.TextSize = 20
+    nm.TextSize = 18
     nm.Font = Enum.Font.Gotham
     nm.TextXAlignment = Enum.TextXAlignment.Left
     nm.TextWrapped = true
@@ -502,7 +502,7 @@ local function ShowKeyPage()
 end
 
 -- GAME PAGE
-function ShowGamePage(game)
+function ShowGamePage(gameData)
     Clear()
     
     local page = Instance.new("Frame")
@@ -514,7 +514,7 @@ function ShowGamePage(game)
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1, 0, 0, 32)
     title.BackgroundTransparency = 1
-    title.Text = game.icon .. " " .. game.name
+    title.Text = gameData.icon .. " " .. gameData.name
     title.TextColor3 = Color3.fromRGB(255, 255, 255)
     title.TextSize = 20
     title.Font = Enum.Font.GothamBold
@@ -539,7 +539,7 @@ function ShowGamePage(game)
     at.BackgroundTransparency = 1
     at.Text = "🚀 Activate Script"
     at.TextColor3 = Color3.fromRGB(255, 255, 255)
-    at.TextSize = 14
+    at.TextSize = 17
     at.Font = Enum.Font.GothamBold
     at.Parent = activate
     
@@ -557,7 +557,7 @@ function ShowGamePage(game)
         task.wait(0.5)
         
         local ok, err = pcall(function()
-            local code = game:GetService("HttpService"):GetAsync(game.script_url)
+            local code = game:GetService("HttpService"):GetAsync(gameData.script_url)
             loadstring(code)()
         end)
         
@@ -587,7 +587,7 @@ function ShowGamePage(game)
     infot.BackgroundTransparency = 1
     infot.Text = "ℹ️ Script Info"
     infot.TextColor3 = Color3.fromRGB(255, 255, 255)
-    infot.TextSize = 36
+    infot.TextSize = 20
     infot.Font = Enum.Font.GothamBold
     infot.TextXAlignment = Enum.TextXAlignment.Left
     infot.Parent = info
@@ -598,7 +598,7 @@ function ShowGamePage(game)
     infom.BackgroundTransparency = 1
     infom.Text = "✅ Auto Collect Cash\n✅ Auto Rebirth\n✅ Auto Steal & more!"
     infom.TextColor3 = Color3.fromRGB(170, 170, 170)
-    infom.TextSize = 20
+    infom.TextSize = 16
     infom.Font = Enum.Font.Gotham
     infom.TextXAlignment = Enum.TextXAlignment.Left
     infom.TextYAlignment = Enum.TextYAlignment.Top
