@@ -47,8 +47,8 @@ ScreenGui.Parent = game:GetService("CoreGui")
 -- Main Frame (Container)
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 700, 0, 450)
-MainFrame.Position = UDim2.new(0.5, -350, 0.5, -225)
+MainFrame.Size = UDim2.new(0, 650, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -325, 0.5, -200)
 MainFrame.BackgroundTransparency = 1
 MainFrame.Parent = ScreenGui
 
@@ -56,8 +56,8 @@ MainFrame.Parent = ScreenGui
 local Background = Instance.new("Frame")
 Background.Name = "Background"
 Background.Size = UDim2.new(1, 0, 1, 0)
-Background.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Background.BackgroundTransparency = 0.3
+Background.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Background.BackgroundTransparency = 0.15
 Background.BorderSizePixel = 0
 Background.Parent = MainFrame
 
@@ -68,9 +68,9 @@ BackgroundCorner.Parent = Background
 -- Top Bar
 local TopBar = Instance.new("Frame")
 TopBar.Name = "TopBar"
-TopBar.Size = UDim2.new(1, 0, 0, 40)
-TopBar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-TopBar.BackgroundTransparency = 0.2
+TopBar.Size = UDim2.new(1, 0, 0, 35)
+TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TopBar.BackgroundTransparency = 0.1
 TopBar.BorderSizePixel = 0
 TopBar.Parent = MainFrame
 
@@ -82,8 +82,8 @@ TopBarCorner.Parent = TopBar
 local TopBarFix = Instance.new("Frame")
 TopBarFix.Size = UDim2.new(1, 0, 0, 12)
 TopBarFix.Position = UDim2.new(0, 0, 1, -12)
-TopBarFix.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-TopBarFix.BackgroundTransparency = 0.2
+TopBarFix.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TopBarFix.BackgroundTransparency = 0.1
 TopBarFix.BorderSizePixel = 0
 TopBarFix.Parent = TopBar
 
@@ -132,10 +132,10 @@ end)
 -- Sidebar
 local Sidebar = Instance.new("Frame")
 Sidebar.Name = "Sidebar"
-Sidebar.Size = UDim2.new(0, 200, 1, -40)
-Sidebar.Position = UDim2.new(0, 0, 0, 40)
-Sidebar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-Sidebar.BackgroundTransparency = 0.3
+Sidebar.Size = UDim2.new(0, 180, 1, -35)
+Sidebar.Position = UDim2.new(0, 0, 0, 35)
+Sidebar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Sidebar.BackgroundTransparency = 0.2
 Sidebar.BorderSizePixel = 0
 Sidebar.Parent = MainFrame
 
@@ -146,8 +146,8 @@ SidebarCorner.Parent = Sidebar
 -- Content Area
 local ContentArea = Instance.new("Frame")
 ContentArea.Name = "ContentArea"
-ContentArea.Size = UDim2.new(1, -200, 1, -40)
-ContentArea.Position = UDim2.new(0, 200, 0, 40)
+ContentArea.Size = UDim2.new(1, -180, 1, -35)
+ContentArea.Position = UDim2.new(0, 180, 0, 35)
 ContentArea.BackgroundTransparency = 1
 ContentArea.Parent = MainFrame
 
@@ -163,10 +163,10 @@ local currentKey = ""
 local function CreateSidebarButton(text, icon, yPos, onClick)
     local Button = Instance.new("TextButton")
     Button.Name = text
-    Button.Size = UDim2.new(1, -10, 0, 45)
+    Button.Size = UDim2.new(1, -10, 0, 40)
     Button.Position = UDim2.new(0, 5, 0, yPos)
-    Button.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    Button.BackgroundTransparency = 0.5
+    Button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Button.BackgroundTransparency = 0.3
     Button.BorderSizePixel = 0
     Button.AutoButtonColor = false
     Button.Parent = Sidebar
@@ -176,22 +176,22 @@ local function CreateSidebarButton(text, icon, yPos, onClick)
     ButtonCorner.Parent = Button
     
     local ButtonIcon = Instance.new("TextLabel")
-    ButtonIcon.Size = UDim2.new(0, 30, 1, 0)
+    ButtonIcon.Size = UDim2.new(0, 25, 1, 0)
     ButtonIcon.Position = UDim2.new(0, 10, 0, 0)
     ButtonIcon.BackgroundTransparency = 1
     ButtonIcon.Text = icon
     ButtonIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ButtonIcon.TextSize = 18
+    ButtonIcon.TextSize = 16
     ButtonIcon.Font = Enum.Font.Gotham
     ButtonIcon.Parent = Button
     
     local ButtonText = Instance.new("TextLabel")
-    ButtonText.Size = UDim2.new(1, -50, 1, 0)
-    ButtonText.Position = UDim2.new(0, 45, 0, 0)
+    ButtonText.Size = UDim2.new(1, -45, 1, 0)
+    ButtonText.Position = UDim2.new(0, 40, 0, 0)
     ButtonText.BackgroundTransparency = 1
     ButtonText.Text = text
     ButtonText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ButtonText.TextSize = 13
+    ButtonText.TextSize = 12
     ButtonText.Font = Enum.Font.Gotham
     ButtonText.TextXAlignment = Enum.TextXAlignment.Left
     ButtonText.Parent = Button
@@ -208,12 +208,12 @@ local function CreateSidebarButton(text, icon, yPos, onClick)
     
     -- Hover effect
     Button.MouseEnter:Connect(function()
-        TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
+        TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundTransparency = 0.1}):Play()
     end)
     
     Button.MouseLeave:Connect(function()
         if currentTab ~= text then
-            TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundTransparency = 0.5}):Play()
+            TweenService:Create(Button, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
         end
     end)
     
@@ -224,9 +224,9 @@ local function CreateSidebarButton(text, icon, yPos, onClick)
         for _, btn in pairs(Sidebar:GetChildren()) do
             if btn:IsA("TextButton") then
                 if btn.Name == text then
-                    btn.BackgroundTransparency = 0.2
+                    btn.BackgroundTransparency = 0.1
                 else
-                    btn.BackgroundTransparency = 0.5
+                    btn.BackgroundTransparency = 0.3
                 end
             end
         end
@@ -249,8 +249,8 @@ local function ShowNotification(title, message, duration)
     local notification = Instance.new("Frame")
     notification.Size = UDim2.new(0, 300, 0, 80)
     notification.Position = UDim2.new(1, -320, 0, 20)
-    notification.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    notification.BackgroundTransparency = 0.1
+    notification.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    notification.BackgroundTransparency = 0
     notification.BorderSizePixel = 0
     notification.Parent = ScreenGui
     
@@ -320,10 +320,10 @@ local function ShowKeyAccessPage()
     
     -- Key Input Box
     local KeyInput = Instance.new("TextBox")
-    KeyInput.Size = UDim2.new(1, 0, 0, 45)
+    KeyInput.Size = UDim2.new(1, 0, 0, 40)
     KeyInput.Position = UDim2.new(0, 0, 0, 85)
-    KeyInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    KeyInput.BackgroundTransparency = 0.3
+    KeyInput.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    KeyInput.BackgroundTransparency = 0.2
     KeyInput.BorderSizePixel = 0
     KeyInput.PlaceholderText = "Example: alot of random"
     KeyInput.PlaceholderColor3 = Color3.fromRGB(100, 100, 100)
@@ -344,10 +344,10 @@ local function ShowKeyAccessPage()
     
     -- Button: Get Key
     local GetKeyButton = Instance.new("TextButton")
-    GetKeyButton.Size = UDim2.new(1, 0, 0, 45)
-    GetKeyButton.Position = UDim2.new(0, 0, 0, 145)
-    GetKeyButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    GetKeyButton.BackgroundTransparency = 0.3
+    GetKeyButton.Size = UDim2.new(1, 0, 0, 40)
+    GetKeyButton.Position = UDim2.new(0, 0, 0, 140)
+    GetKeyButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    GetKeyButton.BackgroundTransparency = 0.2
     GetKeyButton.BorderSizePixel = 0
     GetKeyButton.Text = ""
     GetKeyButton.AutoButtonColor = false
@@ -358,21 +358,21 @@ local function ShowKeyAccessPage()
     GetKeyCorner.Parent = GetKeyButton
     
     local GetKeyIcon = Instance.new("TextLabel")
-    GetKeyIcon.Size = UDim2.new(0, 30, 1, 0)
-    GetKeyIcon.Position = UDim2.new(0, 15, 0, 0)
+    GetKeyIcon.Size = UDim2.new(0, 25, 1, 0)
+    GetKeyIcon.Position = UDim2.new(0, 12, 0, 0)
     GetKeyIcon.BackgroundTransparency = 1
     GetKeyIcon.Text = "🔑"
     GetKeyIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-    GetKeyIcon.TextSize = 18
+    GetKeyIcon.TextSize = 16
     GetKeyIcon.Parent = GetKeyButton
     
     local GetKeyText = Instance.new("TextLabel")
     GetKeyText.Size = UDim2.new(1, -60, 1, 0)
-    GetKeyText.Position = UDim2.new(0, 50, 0, 0)
+    GetKeyText.Position = UDim2.new(0, 40, 0, 0)
     GetKeyText.BackgroundTransparency = 1
     GetKeyText.Text = "Get Key (Copy Discord)"
     GetKeyText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    GetKeyText.TextSize = 14
+    GetKeyText.TextSize = 13
     GetKeyText.Font = Enum.Font.Gotham
     GetKeyText.TextXAlignment = Enum.TextXAlignment.Left
     GetKeyText.Parent = GetKeyButton
@@ -388,11 +388,11 @@ local function ShowKeyAccessPage()
     GetKeyArrow.Parent = GetKeyButton
     
     GetKeyButton.MouseEnter:Connect(function()
-        TweenService:Create(GetKeyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.1}):Play()
+        TweenService:Create(GetKeyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
     end)
     
     GetKeyButton.MouseLeave:Connect(function()
-        TweenService:Create(GetKeyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
+        TweenService:Create(GetKeyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
     end)
     
     GetKeyButton.MouseButton1Click:Connect(function()
@@ -406,10 +406,10 @@ local function ShowKeyAccessPage()
     
     -- Button: Buy Premium
     local BuyButton = Instance.new("TextButton")
-    BuyButton.Size = UDim2.new(1, 0, 0, 45)
-    BuyButton.Position = UDim2.new(0, 0, 0, 200)
-    BuyButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    BuyButton.BackgroundTransparency = 0.3
+    BuyButton.Size = UDim2.new(1, 0, 0, 40)
+    BuyButton.Position = UDim2.new(0, 0, 0, 190)
+    BuyButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    BuyButton.BackgroundTransparency = 0.2
     BuyButton.BorderSizePixel = 0
     BuyButton.Text = ""
     BuyButton.AutoButtonColor = false
@@ -420,21 +420,21 @@ local function ShowKeyAccessPage()
     BuyCorner.Parent = BuyButton
     
     local BuyIcon = Instance.new("TextLabel")
-    BuyIcon.Size = UDim2.new(0, 30, 1, 0)
-    BuyIcon.Position = UDim2.new(0, 15, 0, 0)
+    BuyIcon.Size = UDim2.new(0, 25, 1, 0)
+    BuyIcon.Position = UDim2.new(0, 12, 0, 0)
     BuyIcon.BackgroundTransparency = 1
     BuyIcon.Text = "💰"
     BuyIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-    BuyIcon.TextSize = 18
+    BuyIcon.TextSize = 16
     BuyIcon.Parent = BuyButton
     
     local BuyText = Instance.new("TextLabel")
     BuyText.Size = UDim2.new(1, -60, 1, 0)
-    BuyText.Position = UDim2.new(0, 50, 0, 0)
+    BuyText.Position = UDim2.new(0, 40, 0, 0)
     BuyText.BackgroundTransparency = 1
     BuyText.Text = "Buy Permanent Key"
     BuyText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    BuyText.TextSize = 14
+    BuyText.TextSize = 13
     BuyText.Font = Enum.Font.Gotham
     BuyText.TextXAlignment = Enum.TextXAlignment.Left
     BuyText.Parent = BuyButton
@@ -450,11 +450,11 @@ local function ShowKeyAccessPage()
     BuyArrow.Parent = BuyButton
     
     BuyButton.MouseEnter:Connect(function()
-        TweenService:Create(BuyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.1}):Play()
+        TweenService:Create(BuyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
     end)
     
     BuyButton.MouseLeave:Connect(function()
-        TweenService:Create(BuyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
+        TweenService:Create(BuyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
     end)
     
     BuyButton.MouseButton1Click:Connect(function()
@@ -466,10 +466,10 @@ local function ShowKeyAccessPage()
     
     -- Button: Verify Key
     local VerifyButton = Instance.new("TextButton")
-    VerifyButton.Size = UDim2.new(1, 0, 0, 45)
-    VerifyButton.Position = UDim2.new(0, 0, 0, 255)
-    VerifyButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    VerifyButton.BackgroundTransparency = 0.3
+    VerifyButton.Size = UDim2.new(1, 0, 0, 40)
+    VerifyButton.Position = UDim2.new(0, 0, 0, 240)
+    VerifyButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    VerifyButton.BackgroundTransparency = 0.2
     VerifyButton.BorderSizePixel = 0
     VerifyButton.Text = ""
     VerifyButton.AutoButtonColor = false
@@ -480,21 +480,21 @@ local function ShowKeyAccessPage()
     VerifyCorner.Parent = VerifyButton
     
     local VerifyIcon = Instance.new("TextLabel")
-    VerifyIcon.Size = UDim2.new(0, 30, 1, 0)
-    VerifyIcon.Position = UDim2.new(0, 15, 0, 0)
+    VerifyIcon.Size = UDim2.new(0, 25, 1, 0)
+    VerifyIcon.Position = UDim2.new(0, 12, 0, 0)
     VerifyIcon.BackgroundTransparency = 1
     VerifyIcon.Text = "✅"
     VerifyIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-    VerifyIcon.TextSize = 18
+    VerifyIcon.TextSize = 16
     VerifyIcon.Parent = VerifyButton
     
     local VerifyText = Instance.new("TextLabel")
     VerifyText.Size = UDim2.new(1, -60, 1, 0)
-    VerifyText.Position = UDim2.new(0, 50, 0, 0)
+    VerifyText.Position = UDim2.new(0, 40, 0, 0)
     VerifyText.BackgroundTransparency = 1
     VerifyText.Text = "Verify Key"
     VerifyText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    VerifyText.TextSize = 14
+    VerifyText.TextSize = 13
     VerifyText.Font = Enum.Font.Gotham
     VerifyText.TextXAlignment = Enum.TextXAlignment.Left
     VerifyText.Parent = VerifyButton
@@ -510,11 +510,11 @@ local function ShowKeyAccessPage()
     VerifyArrow.Parent = VerifyButton
     
     VerifyButton.MouseEnter:Connect(function()
-        TweenService:Create(VerifyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.1}):Play()
+        TweenService:Create(VerifyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
     end)
     
     VerifyButton.MouseLeave:Connect(function()
-        TweenService:Create(VerifyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()
+        TweenService:Create(VerifyButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
     end)
     
     VerifyButton.MouseButton1Click:Connect(function()
@@ -537,7 +537,7 @@ local function ShowKeyAccessPage()
             -- Add game buttons to sidebar
             task.wait(0.5)
             for i, gameConfig in ipairs(GAMES) do
-                CreateSidebarButton(gameConfig.name, gameConfig.icon, 60 + (i * 55), function()
+                CreateSidebarButton(gameConfig.name, gameConfig.icon, 55 + ((i - 1) * 50), function()
                     ShowGamePage(gameConfig)
                 end)
             end
@@ -626,7 +626,8 @@ local function ShowGamePage(gameConfig)
         task.wait(0.5)
         
         local success, err = pcall(function()
-            local scriptCode = game:HttpGet(gameConfig.script_url, true)
+            local HttpService = game:GetService("HttpService")
+            local scriptCode = game:GetService("HttpService"):GetAsync(gameConfig.script_url)
             loadstring(scriptCode)()
         end)
         
@@ -642,8 +643,8 @@ local function ShowGamePage(gameConfig)
     local InfoBox = Instance.new("Frame")
     InfoBox.Size = UDim2.new(1, 0, 0, 100)
     InfoBox.Position = UDim2.new(0, 0, 0, 200)
-    InfoBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    InfoBox.BackgroundTransparency = 0.5
+    InfoBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    InfoBox.BackgroundTransparency = 0.3
     InfoBox.BorderSizePixel = 0
     InfoBox.Parent = Container
     
