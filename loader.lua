@@ -553,43 +553,36 @@ function ShowGamePage(gameData)
     activate.MouseButton1Click:Connect(function()
         Notify("⏳ Loading...", "Please wait...", 2)
         
-        -- Шаг 1: Предзагружаем Rayfield если его нет
+        task.wait(0.3)
+        
+        -- Шаг 1: Загружаем Rayfield ПЕРЕД скриптом игры (если еще не загружен)
         if not _G.Rayfield then
-            local rayfieldOk, rayfieldLib = pcall(function()
-                local success, result = pcall(function()
-                    return game:HttpGet('https://sirius.menu/rayfield', true)
-                end)
-                if success then
-                    local func = loadstring(result)
-                    return func()
-                end
-                return nil
+            local rayfieldSuccess = pcall(function()
+                local rayfieldCode = game:HttpGet('https://sirius.menu/rayfield', true)
+                _G.Rayfield = loadstring(rayfieldCode)()
+                _G.RayfieldInstance = _G.Rayfield
             end)
             
-            if rayfieldOk and rayfieldLib then
-                _G.Rayfield = rayfieldLib
-                _G.RayfieldInstance = rayfieldLib
-            else
-                warn("[Aether Hub] Failed to load Rayfield:", rayfieldLib)
-                Notify("❌ Error", "Failed to load UI library", 5)
+            if not rayfieldSuccess or not _G.Rayfield then
+                warn("[Aether Hub] Failed to load Rayfield")
+                Notify("❌ Error", "UI library failed to load", 5)
                 return
             end
         end
         
-        task.wait(0.3)
+        task.wait(0.2)
         
-        -- Шаг 2: Загружаем скрипт игры
-        local ok, err = pcall(function()
+        -- Шаг 2: Теперь загружаем скрипт игры
+        local scriptSuccess, scriptError = pcall(function()
             local scriptCode = game:HttpGet(gameData.script_url, true)
-            local loadedFunction = loadstring(scriptCode)
-            loadedFunction()
+            loadstring(scriptCode)()
         end)
         
-        if ok then
+        if scriptSuccess then
             Notify("✅ Loaded!", "Enjoy!", 3)
         else
-            warn("[Aether Hub] Load error:", err)
-            Notify("❌ Error", "Check F9", 5)
+            warn("[Aether Hub] Script error:", scriptError)
+            Notify("❌ Error", "Check F9 console", 5)
         end
     end)
     
