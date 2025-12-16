@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether Hub - Claim Key</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .loading {
+            display: block;
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .key-display {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .key-text {
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            color: #667eea;
+            font-weight: bold;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .copy-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .error {
+            display: none;
+            color: #dc3545;
+            margin: 20px 0;
+        }
+        
+        .success-icon {
+            display: none;
+            font-size: 64px;
+            margin: 20px 0;
+        }
+        
+        .timer {
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🔑</div>
+        <h1>Aether Hub</h1>
+        <p class="subtitle">Generating your key...</p>
+        
+        <div class="loading" id="loading"></div>
+        
+        <div class="success-icon" id="successIcon">✅</div>
+        
+        <div class="key-display" id="keyDisplay">
+            <p style="color: #666; margin-bottom: 10px;">Your Key:</p>
+            <div class="key-text" id="keyText"></div>
+            <button class="copy-btn" onclick="copyKey()">📋 Copy Key</button>
+            <div class="timer" id="timer">Valid for: <span id="duration"></span></div>
+        </div>
+        
+        <div class="error" id="error">
+            <p>❌ Failed to generate key. Please try again or contact support.</p>
+        </div>
+    </div>
+
+    <script>
+        // Get token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const duration = urlParams.get('duration') || '3h';
+        
+        // API endpoint (Railway)
+        const API_URL = 'https://discord-production-215b.up.railway.app';
+        
+        async function claimKey() {
+            if (!token) {
+                showError();
+                return;
+            }
+            
+            try {
+                // Call API to claim key
+                const response = await fetch(`${API_URL}/claim?token=${token}`);
+                const data = await response.json();
+                
+                if (data.success && data.key) {
+                    showKey(data.key, data.duration);
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError();
+            }
+        }
+        
+        function showKey(key, duration) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('successIcon').style.display = 'block';
+            document.getElementById('keyDisplay').style.display = 'block';
+            document.getElementById('keyText').textContent = key;
+            
+            let durationText = '';
+            if (duration === '3h') durationText = '3 hours';
+            else if (duration === 'monthly') durationText = '30 days';
+            else if (duration === 'lifetime') durationText = 'Forever';
+            
+            document.getElementById('duration').textContent = durationText;
+            document.querySelector('.subtitle').textContent = '🎉 Key generated successfully!';
+        }
+        
+        function showError() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.querySelector('.subtitle').textContent = 'Oops! Something went wrong.';
+        }
+        
+        function copyKey() {
+            const keyText = document.getElementById('keyText').textContent;
+            navigator.clipboard.writeText(keyText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy Key';
+                }, 2000);
+            });
+        }
+        
+        // Auto-claim on page load
+        claimKey();
+    </script>
+</body>
+</html>
