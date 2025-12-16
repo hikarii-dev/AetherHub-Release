@@ -328,29 +328,29 @@ local function ShowKeyPage()
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = page
     
-    -- Label слева
+    -- Label слева - ЯРЧЕ и ЖИРНЕЕ
     local inputLabel = Instance.new("TextLabel")
-    inputLabel.Size = UDim2.new(0, 130, 0, 38)
+    inputLabel.Size = UDim2.new(0, 110, 0, 38)
     inputLabel.Position = UDim2.new(0, 0, 0, 45)
     inputLabel.BackgroundTransparency = 1
     inputLabel.Text = "Enter Your Key:"
-    inputLabel.TextColor3 = Color3.fromRGB(140, 140, 140)
-    inputLabel.TextSize = 11
-    inputLabel.Font = Enum.Font.Gotham
+    inputLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    inputLabel.TextSize = 12
+    inputLabel.Font = Enum.Font.GothamSemibold
     inputLabel.TextXAlignment = Enum.TextXAlignment.Left
     inputLabel.Parent = page
     
-    -- Input поле СПРАВА
+    -- Input поле БЛИЖЕ к label
     local input = Instance.new("TextBox")
-    input.Size = UDim2.new(1, -140, 0, 38)
-    input.Position = UDim2.new(0, 140, 0, 45)
+    input.Size = UDim2.new(1, -120, 0, 38)
+    input.Position = UDim2.new(0, 120, 0, 45)
     input.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
     input.BackgroundTransparency = 0.3
     input.BorderSizePixel = 0
     input.PlaceholderText = "Poelsidjeudj2jaksujskd"
-    input.PlaceholderColor3 = Color3.fromRGB(90, 90, 90)
+    input.PlaceholderColor3 = Color3.fromRGB(110, 110, 110)
     input.Text = ""
-    input.TextColor3 = Color3.fromRGB(210, 210, 210)
+    input.TextColor3 = Color3.fromRGB(230, 230, 230)
     input.TextSize = 12
     input.Font = Enum.Font.Gotham
     input.ClearTextOnFocus = false
@@ -396,9 +396,9 @@ local function ShowKeyPage()
         bt.Position = UDim2.new(0, 38, 0, 0)
         bt.BackgroundTransparency = 1
         bt.Text = txt
-        bt.TextColor3 = Color3.fromRGB(210, 210, 210)
-        bt.TextSize = 12
-        bt.Font = Enum.Font.Gotham
+        bt.TextColor3 = Color3.fromRGB(220, 220, 220)
+        bt.TextSize = 13
+        bt.Font = Enum.Font.GothamSemibold
         bt.TextXAlignment = Enum.TextXAlignment.Left
         bt.Parent = b
         
