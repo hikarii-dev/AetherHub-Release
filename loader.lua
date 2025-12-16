@@ -328,24 +328,37 @@ local function ShowKeyPage()
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = page
     
-    -- Label слева - ЯРЧЕ и ЖИРНЕЕ
+    -- КОНТЕЙНЕР - темное поле
+    local inputContainer = Instance.new("Frame")
+    inputContainer.Size = UDim2.new(1, 0, 0, 38)
+    inputContainer.Position = UDim2.new(0, 0, 0, 45)
+    inputContainer.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    inputContainer.BackgroundTransparency = 0.3
+    inputContainer.BorderSizePixel = 0
+    inputContainer.Parent = page
+    
+    local containerCorner = Instance.new("UICorner")
+    containerCorner.CornerRadius = UDim.new(0, 5)
+    containerCorner.Parent = inputContainer
+    
+    -- Label ВНУТРИ контейнера слева
     local inputLabel = Instance.new("TextLabel")
-    inputLabel.Size = UDim2.new(0, 110, 0, 38)
-    inputLabel.Position = UDim2.new(0, 0, 0, 45)
+    inputLabel.Size = UDim2.new(0, 120, 1, 0)
+    inputLabel.Position = UDim2.new(0, 12, 0, 0)
     inputLabel.BackgroundTransparency = 1
     inputLabel.Text = "Enter Your Key:"
-    inputLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    inputLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
     inputLabel.TextSize = 12
     inputLabel.Font = Enum.Font.GothamSemibold
     inputLabel.TextXAlignment = Enum.TextXAlignment.Left
-    inputLabel.Parent = page
+    inputLabel.Parent = inputContainer
     
-    -- Input поле БЛИЖЕ к label
+    -- СВЕТЛОЕ поле для ввода ВНУТРИ контейнера справа
     local input = Instance.new("TextBox")
-    input.Size = UDim2.new(1, -120, 0, 38)
-    input.Position = UDim2.new(0, 120, 0, 45)
-    input.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
-    input.BackgroundTransparency = 0.3
+    input.Size = UDim2.new(0, 330, 0, 28)
+    input.Position = UDim2.new(1, -338, 0, 5)
+    input.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    input.BackgroundTransparency = 0.2
     input.BorderSizePixel = 0
     input.PlaceholderText = "Poelsidjeudj2jaksujskd"
     input.PlaceholderColor3 = Color3.fromRGB(110, 110, 110)
@@ -354,15 +367,15 @@ local function ShowKeyPage()
     input.TextSize = 12
     input.Font = Enum.Font.Gotham
     input.ClearTextOnFocus = false
-    input.Parent = page
+    input.Parent = inputContainer
     
     local inputCorner = Instance.new("UICorner")
-    inputCorner.CornerRadius = UDim.new(0, 5)
+    inputCorner.CornerRadius = UDim.new(0, 4)
     inputCorner.Parent = input
     
     local inputPadding = Instance.new("UIPadding")
-    inputPadding.PaddingLeft = UDim.new(0, 10)
-    inputPadding.PaddingRight = UDim.new(0, 10)
+    inputPadding.PaddingLeft = UDim.new(0, 8)
+    inputPadding.PaddingRight = UDim.new(0, 8)
     inputPadding.Parent = input
     
     local function Btn(txt, ico, y, cb)
