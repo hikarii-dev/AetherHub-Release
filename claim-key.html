@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether Hub - Your Key</title>
+    <title>Aether Hub - Claim Key</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -40,7 +36,6 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         
         .key-box {
@@ -80,13 +75,8 @@
             transition: transform 0.2s;
         }
         
-        .copy-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .copy-btn:active {
-            transform: scale(0.95);
-        }
+        .copy-btn:hover { transform: scale(1.05); }
+        .copy-btn:active { transform: scale(0.95); }
         
         .info {
             margin-top: 20px;
@@ -110,9 +100,7 @@
             text-align: center;
         }
         
-        .error h2 {
-            margin-bottom: 10px;
-        }
+        .error h2 { margin-bottom: 10px; }
         
         .discord-btn {
             background: #5865F2;
@@ -128,10 +116,7 @@
             display: inline-block;
         }
         
-        .loading {
-            text-align: center;
-            color: #666;
-        }
+        .loading { text-align: center; color: #666; }
         
         .spinner {
             border: 4px solid #f3f3f3;
@@ -153,7 +138,7 @@
     <div class="container" id="content">
         <div class="loading">
             <div class="spinner"></div>
-            <p>Loading your key...</p>
+            <p>Claiming your key...</p>
         </div>
     </div>
 
@@ -163,63 +148,49 @@
         
         async function getKey() {
             try {
-                // Получаем параметр key из URL (Linkvertise передает его)
                 const urlParams = new URLSearchParams(window.location.search);
-                const reservedKey = urlParams.get('key');
+                const token = urlParams.get('token');
                 
-                if (!reservedKey) {
-                    showError('No key provided', 'Please get a key from the hub first.');
+                if (!token) {
+                    showError('No Token', 'Get a token from Aether Hub first!');
                     return;
                 }
                 
-                // Запрашиваем ключ у API
-                const response = await fetch(`${API_URL}/claim-reserved?key=${reservedKey}`);
+                const response = await fetch(`${API_URL}/claim-key?token=${token}`);
                 const data = await response.json();
                 
                 if (data.success) {
                     showKey(data.key, data.game);
                 } else {
-                    if (data.reason === 'pool_exhausted') {
-                        showError(
-                            'Trial Keys Exhausted!',
-                            'All trial keys have been claimed. Join our Discord to get premium keys!',
-                            true
-                        );
-                    } else {
-                        showError(
-                            'Key Not Available',
-                            data.message || 'This key reservation has expired. Please try again.',
-                            false
-                        );
-                    }
+                    const errors = {
+                        'invalid_token': ['Invalid Token', 'Token not found. Get a new one from the hub.'],
+                        'token_expired': ['Token Expired', 'Expired (15 min limit). Get a new one.'],
+                        'already_claimed': ['Already Claimed', 'Token already used. Get a new one.']
+                    };
+                    
+                    const [title, msg] = errors[data.reason] || ['Error', data.message];
+                    showError(title, msg, false);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showError('Connection Error', 'Failed to connect to server. Please try again.');
+                showError('Connection Error', 'Failed to connect. Try again.');
             }
         }
         
         function showKey(key, game) {
             document.getElementById('content').innerHTML = `
-                <div class="logo">
-                    <h1>🌟 Aether Hub</h1>
-                </div>
-                
+                <div class="logo"><h1>🌟 Aether Hub</h1></div>
                 <div class="key-box">
                     <div class="key-label">Your Trial Key:</div>
                     <div class="key-value" id="keyValue">${key}</div>
                 </div>
-                
-                <button class="copy-btn" onclick="copyKey()">
-                    📋 Copy Key
-                </button>
-                
+                <button class="copy-btn" onclick="copyKey()">📋 Copy Key</button>
                 <div class="info">
-                    <strong>✅ Key Reserved for: ${formatGameName(game)}</strong>
+                    <strong>✅ Key for: ${formatGameName(game)}</strong>
                     • Valid for 3 hours after activation<br>
-                    • Paste this key in the Aether Hub<br>
-                    • Click "Verify Key" to activate<br>
-                    • Works only on one PC
+                    • Paste in Aether Hub and click Verify<br>
+                    • Works only on one PC<br>
+                    • Activate within 10 minutes
                 </div>
             `;
         }
@@ -229,11 +200,7 @@
                 <div class="error">
                     <h2>❌ ${title}</h2>
                     <p>${message}</p>
-                    ${showDiscord ? `
-                        <a href="${DISCORD_INVITE}" class="discord-btn" target="_blank">
-                            Join Discord for Premium
-                        </a>
-                    ` : ''}
+                    ${showDiscord ? `<a href="${DISCORD_INVITE}" class="discord-btn" target="_blank">Join Discord for Premium</a>` : ''}
                 </div>
             `;
         }
@@ -243,9 +210,7 @@
             navigator.clipboard.writeText(keyValue).then(() => {
                 const btn = document.querySelector('.copy-btn');
                 btn.textContent = '✅ Copied!';
-                setTimeout(() => {
-                    btn.textContent = '📋 Copy Key';
-                }, 2000);
+                setTimeout(() => btn.textContent = '📋 Copy Key', 2000);
             });
         }
         
@@ -257,7 +222,6 @@
             return names[game] || game;
         }
         
-        // Загружаем ключ при загрузке страницы
         getKey();
     </script>
 </body>
