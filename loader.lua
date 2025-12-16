@@ -1,116 +1,161 @@
---[[
-    Aether Hub v1.0.0
-    Created by hikarii.dev
-    https://discord.gg/2fpWv8B9ch
-]]
+-- Aether Hub v3.0
+-- Simple premium system with trial key
 
-local AetherHub = {}
-
--- Services
-local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
-local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
 
--- Config
-local CONFIG_URL = "https://raw.githubusercontent.com/hikarii-dev/AetherHub-Release/main/config.json"
+-- Configuration
+local API_URL = "https://roblox-production-7b1c.up.railway.app" -- Твой Railway URL
 local DISCORD_INVITE = "https://discord.gg/2fpWv8B9ch"
-
--- Local Player
-local LocalPlayer = Players.LocalPlayer
 local HWID = game:GetService("RbxAnalyticsService"):GetClientId()
-
--- Folders
-local FOLDER_NAME = "AetherHub"
-if not isfolder(FOLDER_NAME) then
-    makefolder(FOLDER_NAME)
-end
 
 -- Load Rayfield UI Library
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- Load Config
-local function loadConfig()
-    local success, result = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet(CONFIG_URL))
-    end)
-    
-    if success then
-        return result
-    else
-        warn("[Aether Hub] Failed to load config:", result)
-        return nil
-    end
-end
-
--- Check if key file exists and is valid
-local function checkSavedKey(gameId)
-    local keyFile = FOLDER_NAME .. "/" .. gameId .. "_key.json"
-    
-    if isfile(keyFile) then
-        local success, keyData = pcall(function()
-            return HttpService:JSONDecode(readfile(keyFile))
-        end)
-        
-        if success and keyData then
-            -- Check if key is expired
-            if keyData.expires == "never" or (keyData.expires and os.time() < keyData.expires) then
-                -- Check HWID match
-                if keyData.hwid == HWID then
-                    return true, keyData
-                end
-            end
-        end
-    end
-    
-    return false, nil
-end
-
--- Save key to file
-local function saveKey(gameId, key, expires)
-    local keyData = {
-        key = key,
-        game = gameId,
-        expires = expires,
-        hwid = HWID,
-        saved_at = os.time()
-    }
-    
-    local keyFile = FOLDER_NAME .. "/" .. gameId .. "_key.json"
-    writefile(keyFile, HttpService:JSONEncode(keyData))
-end
-
--- Verify key with Railway-hosted API
-local function verifyKey(key, gameId)
+-- Verify key with API
+local function verifyKey(key)
     local success, response = pcall(function()
-        local apiUrl = "https://discord-production-215b.up.railway.app/verify?key=" .. key .. "&game=" .. gameId
-        local data = game:HttpGet(apiUrl)
+        local url = API_URL .. "/verify?key=" .. key .. "&hwid=" .. HWID
+        local data = game:HttpGet(url)
         return HttpService:JSONDecode(data)
     end)
     
     if not success then
-        warn("[Aether Hub] Failed to verify key:", response)
-        return false, nil
+        warn("[Aether Hub] API Error:", response)
+        return false, nil, nil
     end
     
     if response.valid then
-        return true, response.expires or "never"
+        return true, response.expires, response.type
     end
     
-    return false, nil
+    return false, response.reason, nil
+end
+
+-- Create expired screen
+local function showExpiredScreen(Window)
+    -- Destroy all existing tabs
+    -- Note: Rayfield doesn't have a direct way to remove tabs,
+    -- so we'll create a new window instead
+    
+    Rayfield:Destroy()
+    
+    local ExpiredWindow = Rayfield:CreateWindow({
+        Name = "⏰ Aether Hub - Trial Expired",
+        LoadingTitle = "Session Ended",
+        LoadingSubtitle = "by hikarii.dev",
+        ConfigurationSaving = {
+            Enabled = false
+        },
+        Discord = {
+            Enabled = true,
+            Invite = DISCORD_INVITE,
+            RememberJoins = false
+        },
+        KeySystem = false
+    })
+    
+    local MainTab = ExpiredWindow:CreateTab("💎 Get Premium", nil)
+    
+    MainTab:CreateSection("Trial Expired")
+    
+    MainTab:CreateParagraph({
+        Title = "⏰ Your trial has ended",
+        Content = "Thank you for trying Aether Hub! To continue using our scripts, please purchase a premium key."
+    })
+    
+    MainTab:CreateSection("Premium Pricing")
+    
+    MainTab:CreateLabel("💎 Monthly: $5")
+    MainTab:CreateLabel("   ⏰ 30 days access")
+    MainTab:CreateLabel("   ✅ All games included")
+    
+    MainTab:CreateLabel("")
+    
+    MainTab:CreateLabel("💎 3 Months: $10")
+    MainTab:CreateLabel("   ⏰ 90 days access")
+    MainTab:CreateLabel("   ✅ All games included")
+    MainTab:CreateLabel("   🎁 Save $5!")
+    
+    MainTab:CreateSection("How to Purchase")
+    
+    MainTab:CreateButton({
+        Name = "📋 Copy Discord Link",
+        Callback = function()
+            if setclipboard then
+                setclipboard(DISCORD_INVITE)
+                Rayfield:Notify({
+                    Title = "✅ Copied!",
+                    Content = "Discord link copied to clipboard",
+                    Duration = 3
+                })
+            end
+        end
+    })
+    
+    MainTab:CreateButton({
+        Name = "🌐 Open Discord",
+        Callback = function()
+            if setclipboard then
+                setclipboard(DISCORD_INVITE)
+            end
+            -- Note: Can't directly open browser from Roblox
+            Rayfield:Notify({
+                Title = "Discord Link Copied",
+                Content = "Paste in your browser to join!",
+                Duration = 5
+            })
+        end
+    })
+    
+    MainTab:CreateParagraph({
+        Title = "📝 Purchase Steps",
+        Content = "1. Join our Discord server\n2. Go to #purchase channel\n3. DM @hikarii.dev\n4. Send payment\n5. Receive your key instantly!"
+    })
+end
+
+-- Background key checker (runs every 60 seconds)
+local function startKeyChecker(currentKey, Window)
+    task.spawn(function()
+        while task.wait(60) do
+            local valid, expiresOrReason, keyType = verifyKey(currentKey)
+            
+            if not valid then
+                warn("[Aether Hub] Key expired or invalid:", expiresOrReason)
+                showExpiredScreen(Window)
+                break
+            end
+            
+            -- Check if about to expire (< 5 minutes left)
+            if keyType ~= "trial" and expiresOrReason then
+                local timeLeft = expiresOrReason - os.time()
+                if timeLeft < 300 and timeLeft > 0 then
+                    Rayfield:Notify({
+                        Title = "⏰ Key Expiring Soon",
+                        Content = "Less than 5 minutes remaining!",
+                        Duration = 10
+                    })
+                end
+            end
+        end
+    end)
 end
 
 -- Load game script
-local function loadGame(gameData)
+local function loadGame(gameScript, currentKey, Window)
     Rayfield:Notify({
-        Title = "Loading Game",
-        Content = "Loading " .. gameData.name .. "...",
-        Duration = 2,
+        Title = "Loading Script",
+        Content = "Please wait...",
+        Duration = 2
     })
     
     task.wait(0.5)
     
+    -- Start background key checker
+    startKeyChecker(currentKey, Window)
+    
     local success, err = pcall(function()
-        local scriptCode = game:HttpGet(gameData.script, true)
+        local scriptCode = game:HttpGet(gameScript, true)
         loadstring(scriptCode)()
     end)
     
@@ -119,207 +164,173 @@ local function loadGame(gameData)
     else
         Rayfield:Notify({
             Title = "Error",
-            Content = "Failed to load game: " .. tostring(err),
-            Duration = 5,
+            Content = "Failed to load script: " .. tostring(err),
+            Duration = 5
         })
     end
 end
 
--- Main Hub UI
-local function createHub(config)
-    local Window = Rayfield:CreateWindow({
-        Name = config.hub.name .. " v" .. config.hub.version,
-        LoadingTitle = "Loading Aether Hub...",
-        LoadingSubtitle = "by " .. config.hub.author,
-        ConfigurationSaving = {
-            Enabled = false
-        },
-        Discord = {
-            Enabled = true,
-            Invite = config.hub.discord,
-            RememberJoins = true
-        }
-    })
-    
-    -- Games Tab
-    local GamesTab = Window:CreateTab("🎮 Games", nil)
-    
-    for _, game in ipairs(config.games) do
-        local section = GamesTab:CreateSection(game.name)
-        
-        -- Check for saved key
-        local hasSavedKey, savedKeyData = checkSavedKey(game.id)
-        
-        local statusText = "Status: "
-        if hasSavedKey then
-            if savedKeyData.expires == "never" then
-                statusText = statusText .. "✅ Premium Active"
-            else
-                local timeLeft = savedKeyData.expires - os.time()
-                local hours = math.floor(timeLeft / 3600)
-                statusText = statusText .. "✅ Active (" .. hours .. "h left)"
-            end
-        else
-            statusText = statusText .. "🔒 Key Required"
+-- Main Hub Window
+local Window = Rayfield:CreateWindow({
+    Name = "🌟 Aether Hub v3.0",
+    LoadingTitle = "Aether Hub",
+    LoadingSubtitle = "by hikarii.dev",
+    ConfigurationSaving = {
+        Enabled = false
+    },
+    Discord = {
+        Enabled = true,
+        Invite = DISCORD_INVITE,
+        RememberJoins = false
+    },
+    KeySystem = false
+})
+
+-- Main Tab
+local MainTab = Window:CreateTab("🏠 Main", nil)
+
+MainTab:CreateSection("Welcome to Aether Hub!")
+
+MainTab:CreateParagraph({
+    Title = "🎁 Free Trial Available!",
+    Content = "Try Aether Hub for 1 hour with the trial key!\nKey: AETH-TRIAL-2025\n(One-time use per PC)"
+})
+
+MainTab:CreateSection("Enter Your Key")
+
+local keyInput = ""
+
+MainTab:CreateInput({
+    Name = "Key",
+    PlaceholderText = "AETH-XXXX-XXXX",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        keyInput = Text
+    end
+})
+
+MainTab:CreateButton({
+    Name = "✅ Verify Key",
+    Callback = function()
+        if keyInput == "" then
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Please enter a key first",
+                Duration = 2
+            })
+            return
         end
         
-        GamesTab:CreateLabel(statusText)
+        Rayfield:Notify({
+            Title = "Verifying...",
+            Content = "Checking key validity...",
+            Duration = 2
+        })
         
-        -- Get Key Button
-        if not hasSavedKey then
-            GamesTab:CreateButton({
-                Name = "🔑 Get Key",
-                Callback = function()
-                    Rayfield:Notify({
-                        Title = "Get Key",
-                        Content = "Join our Discord to get a key!",
-                        Duration = 3,
-                    })
-                    
-                    task.wait(1)
-                    
-                    -- Open Discord invite
-                    if setclipboard then
-                        setclipboard(config.hub.discord)
-                        Rayfield:Notify({
-                            Title = "Discord Link Copied",
-                            Content = "Join and go to #get-keys channel",
-                            Duration = 4,
-                        })
-                    end
-                end
+        local valid, expiresOrReason, keyType = verifyKey(keyInput)
+        
+        if valid then
+            local expiryText = ""
+            if keyType == "trial" then
+                expiryText = "1 hour"
+            elseif expiresOrReason then
+                local timeLeft = expiresOrReason - os.time()
+                local daysLeft = math.floor(timeLeft / 86400)
+                expiryText = daysLeft .. " days"
+            end
+            
+            Rayfield:Notify({
+                Title = "✅ Key Valid!",
+                Content = "Time left: " .. expiryText,
+                Duration = 3
             })
             
-            -- Enter Key Input
-            local keyInput = ""
-            GamesTab:CreateInput({
-                Name = "Enter Key",
-                PlaceholderText = "AETH-XXXX-XXXX",
-                RemoveTextAfterFocusLost = false,
-                Callback = function(Text)
-                    keyInput = Text
-                end
-            })
+            -- Show games tab
+            task.wait(1)
             
-            -- Verify Key Button
-            GamesTab:CreateButton({
-                Name = "✅ Verify Key",
-                Callback = function()
-                    if keyInput == "" then
-                        Rayfield:Notify({
-                            Title = "Error",
-                            Content = "Please enter a key first",
-                            Duration = 2,
-                        })
-                        return
-                    end
-                    
-                    Rayfield:Notify({
-                        Title = "Verifying...",
-                        Content = "Checking key validity...",
-                        Duration = 2,
-                    })
-                    
-                    local valid, expires = verifyKey(keyInput, game.id)
-                    
-                    if valid then
-                        saveKey(game.id, keyInput, expires)
-                        
-                        Rayfield:Notify({
-                            Title = "✅ Key Verified!",
-                            Content = "Loading game...",
-                            Duration = 2,
-                        })
-                        
-                        task.wait(1)
-                        loadGame(game)
-                    else
-                        Rayfield:Notify({
-                            Title = "❌ Invalid Key",
-                            Content = "Key is invalid or expired",
-                            Duration = 3,
-                        })
-                    end
-                end
-            })
-        else
-            -- Launch Script Button (key already saved)
+            local GamesTab = Window:CreateTab("🎮 Games", nil)
+            
+            -- Rob the Brainrot Museum
+            GamesTab:CreateSection("Rob the Brainrot Museum")
+            
             GamesTab:CreateButton({
                 Name = "🚀 Launch Script",
                 Callback = function()
-                    loadGame(game)
+                    loadGame("https://raw.githubusercontent.com/hikarii-dev/AetherHub-Release/main/games/brainrot-museum.lua", keyInput, Window)
                 end
             })
             
-            -- Reset Key Button
-            GamesTab:CreateButton({
-                Name = "🔄 Reset Key",
-                Callback = function()
-                    local keyFile = FOLDER_NAME .. "/" .. game.id .. "_key.json"
-                    if isfile(keyFile) then
-                        delfile(keyFile)
-                        Rayfield:Notify({
-                            Title = "Key Reset",
-                            Content = "Please restart the hub",
-                            Duration = 3,
-                        })
-                    end
-                end
-            })
-        end
-    end
-    
-    -- Info Tab
-    local InfoTab = Window:CreateTab("ℹ️ Info", nil)
-    
-    InfoTab:CreateParagraph({
-        Title = "Aether Hub v" .. config.hub.version,
-        Content = [[Welcome to Aether Hub!
-
-Premium Roblox script hub with advanced features.
-
-Join our Discord for keys and support.
-        
-Created by ]] .. config.hub.author
-    })
-    
-    InfoTab:CreateButton({
-        Name = "📱 Join Discord",
-        Callback = function()
-            if setclipboard then
-                setclipboard(config.hub.discord)
-                Rayfield:Notify({
-                    Title = "Discord Link Copied",
-                    Content = "Paste in your browser to join!",
-                    Duration = 3,
-                })
+            -- Future games will be added here
+            
+        else
+            local errorMsg = "Invalid key"
+            if expiresOrReason == "expired" then
+                errorMsg = "Key has expired"
+            elseif expiresOrReason == "already_used" then
+                errorMsg = "Trial already used on this PC"
+            elseif expiresOrReason == "hwid_mismatch" then
+                errorMsg = "Key is bound to another PC"
+            elseif expiresOrReason == "not_found" then
+                errorMsg = "Key not found"
             end
-        end
-    })
-    
-    InfoTab:CreateButton({
-        Name = "💎 Buy Premium Key",
-        Callback = function()
+            
             Rayfield:Notify({
-                Title = "Premium Keys",
-                Content = "Monthly: $5 | Lifetime: $20\nContact @hikarii.dev in Discord",
-                Duration = 6,
+                Title = "❌ " .. errorMsg,
+                Content = "Please check your key or get a new one",
+                Duration = 4
             })
         end
-    })
-end
-
--- Initialize
-local function init()
-    local config = loadConfig()
-    
-    if not config then
-        warn("[Aether Hub] Failed to initialize")
-        return
     end
-    
-    createHub(config)
-end
+})
 
--- Run
-init()
+MainTab:CreateSection("Get a Key")
+
+MainTab:CreateButton({
+    Name = "📋 Copy Discord Link",
+    Callback = function()
+        if setclipboard then
+            setclipboard(DISCORD_INVITE)
+            Rayfield:Notify({
+                Title = "✅ Copied!",
+                Content = "Discord link copied! Paste in your browser.",
+                Duration = 3
+            })
+        else
+            Rayfield:Notify({
+                Title = "Discord Server",
+                Content = "Join: " .. DISCORD_INVITE,
+                Duration = 5
+            })
+        end
+    end
+})
+
+-- Info Tab
+local InfoTab = Window:CreateTab("ℹ️ Info", nil)
+
+InfoTab:CreateSection("Pricing")
+
+InfoTab:CreateLabel("🎁 Trial: FREE (1 hour)")
+InfoTab:CreateLabel("   Key: AETH-TRIAL-2025")
+InfoTab:CreateLabel("   One-time use per PC")
+
+InfoTab:CreateLabel("")
+
+InfoTab:CreateLabel("💎 Monthly: $5")
+InfoTab:CreateLabel("   30 days access")
+
+InfoTab:CreateLabel("")
+
+InfoTab:CreateLabel("💎 3 Months: $10")
+InfoTab:CreateLabel("   90 days access")
+InfoTab:CreateLabel("   Save $5!")
+
+InfoTab:CreateSection("Supported Games")
+
+InfoTab:CreateLabel("✅ Rob the Brainrot Museum")
+InfoTab:CreateLabel("🔜 More games coming soon!")
+
+InfoTab:CreateSection("Support")
+
+InfoTab:CreateLabel("Discord: " .. DISCORD_INVITE)
+InfoTab:CreateLabel("Contact: @hikarii.dev")
