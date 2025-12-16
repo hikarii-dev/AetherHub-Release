@@ -143,16 +143,31 @@
         let token = urlParams.get('token');
         let duration = urlParams.get('duration');
         
+        // DEBUG
+        console.log('[DEBUG] URL token:', token);
+        console.log('[DEBUG] URL duration:', duration);
+        
         // If not in URL, check localStorage
         if (!token) {
             token = localStorage.getItem('aether_token');
             duration = localStorage.getItem('aether_duration') || '3h';
             
+            console.log('[DEBUG] localStorage token:', token);
+            console.log('[DEBUG] localStorage duration:', duration);
+            
             // Check if token is recent (within 10 minutes)
             const timestamp = localStorage.getItem('aether_timestamp');
-            if (timestamp && (Date.now() - parseInt(timestamp)) > 600000) {
-                // Token expired
-                token = null;
+            console.log('[DEBUG] Token timestamp:', timestamp);
+            
+            if (timestamp) {
+                const age = Date.now() - parseInt(timestamp);
+                console.log('[DEBUG] Token age (ms):', age);
+                console.log('[DEBUG] Token age (minutes):', age / 60000);
+                
+                if (age > 600000) {
+                    console.log('[DEBUG] Token expired!');
+                    token = null;
+                }
             }
         }
         
@@ -161,15 +176,25 @@
         
         async function claimKey() {
             if (!token) {
+                console.error('[ERROR] No token found!');
+                console.log('[DEBUG] localStorage keys:', Object.keys(localStorage));
                 showError();
                 document.querySelector('.subtitle').textContent = 'No token found. Please start from Discord.';
                 return;
             }
             
+            console.log('[DEBUG] Attempting to claim with token:', token);
+            
             try {
                 // Call API to claim key
-                const response = await fetch(`${API_URL}/claim?token=${token}`);
+                const claimUrl = `${API_URL}/claim?token=${token}`;
+                console.log('[DEBUG] Calling API:', claimUrl);
+                
+                const response = await fetch(claimUrl);
+                console.log('[DEBUG] Response status:', response.status);
+                
                 const data = await response.json();
+                console.log('[DEBUG] Response data:', data);
                 
                 if (data.success && data.key) {
                     // Clear localStorage after successful claim
@@ -177,13 +202,17 @@
                     localStorage.removeItem('aether_duration');
                     localStorage.removeItem('aether_timestamp');
                     
+                    console.log('[DEBUG] Key claimed successfully!');
                     showKey(data.key, data.duration);
                 } else {
+                    console.error('[ERROR] API returned error:', data);
                     showError();
+                    document.querySelector('.subtitle').textContent = data.error || 'Failed to generate key';
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('[ERROR] Exception:', error);
                 showError();
+                document.querySelector('.subtitle').textContent = 'Connection error. Please try again.';
             }
         }
         
@@ -205,7 +234,6 @@
         function showError() {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('error').style.display = 'block';
-            document.querySelector('.subtitle').textContent = 'Oops! Something went wrong.';
         }
         
         function copyKey() {
@@ -218,6 +246,20 @@
                 }, 2000);
             });
         }
+        
+        // Show debug info on page
+        window.addEventListener('load', () => {
+            const debugInfo = document.createElement('div');
+            debugInfo.style.cssText = 'position: fixed; bottom: 10px; left: 10px; background: black; color: lime; padding: 10px; font-family: monospace; font-size: 10px; max-width: 300px; border-radius: 5px;';
+            debugInfo.innerHTML = `
+                <strong>DEBUG INFO:</strong><br>
+                Token: ${token || 'NULL'}<br>
+                Duration: ${duration || 'NULL'}<br>
+                Timestamp: ${localStorage.getItem('aether_timestamp') || 'NULL'}<br>
+                localStorage keys: ${Object.keys(localStorage).join(', ')}<br>
+            `;
+            document.body.appendChild(debugInfo);
+        });
         
         // Auto-claim on page load
         claimKey();
