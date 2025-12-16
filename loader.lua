@@ -130,19 +130,36 @@ local function startKeyChecker(currentKey, Window)
             if not valid then
                 warn("[Aether Hub] Key expired or invalid:", expiresOrReason)
                 _G.AetherHubKeyValid = false -- Сообщаем игровому скрипту
-                showExpiredScreen(Window)
+                
+                -- Закрываем Hub БЕЗ уведомлений
+                pcall(function()
+                    Rayfield:Destroy()
+                end)
+                
+                -- Показываем уведомление через StarterGui
+                task.wait(0.5)
+                pcall(function()
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "⏰ Aether Hub",
+                        Text = "Key expired! Get premium in Discord.",
+                        Duration = 10
+                    })
+                end)
+                
                 break
             end
             
-            -- Check if about to expire (< 5 minutes left)
+            -- Check if about to expire (< 5 minutes left) - ТОЛЬКО для premium ключей
             if keyType ~= "trial" and expiresOrReason then
                 local timeLeft = expiresOrReason - os.time()
                 if timeLeft < 300 and timeLeft > 0 then
-                    Rayfield:Notify({
-                        Title = "⏰ Key Expiring Soon",
-                        Content = "Less than 5 minutes remaining!",
-                        Duration = 10
-                    })
+                    pcall(function()
+                        game:GetService("StarterGui"):SetCore("SendNotification", {
+                            Title = "⏰ Key Expiring Soon",
+                            Text = "Less than 5 minutes remaining!",
+                            Duration = 10
+                        })
+                    end)
                 end
             end
         end
