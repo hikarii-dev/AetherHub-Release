@@ -69,10 +69,10 @@ local BgCorner = Instance.new("UICorner")
 BgCorner.CornerRadius = UDim.new(0, 8)
 BgCorner.Parent = Background
 
--- TopBar - немного темнее основного фона
+-- TopBar - ТОГО ЖЕ ЦВЕТА ЧТО И ФОН
 local TopBar = Instance.new("Frame")
 TopBar.Size = UDim2.new(1, 0, 0, 35)
-TopBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TopBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TopBar.BorderSizePixel = 0
 TopBar.Parent = MainFrame
 
@@ -83,7 +83,7 @@ TopCorner.Parent = TopBar
 local TopFix = Instance.new("Frame")
 TopFix.Size = UDim2.new(1, 0, 0, 8)
 TopFix.Position = UDim2.new(0, 0, 1, -8)
-TopFix.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TopFix.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TopFix.BorderSizePixel = 0
 TopFix.Parent = TopBar
 
@@ -208,16 +208,6 @@ local function CreateTab(name, icon, yPos, callback)
     textLbl.Font = Enum.Font.Gotham
     textLbl.TextXAlignment = Enum.TextXAlignment.Left
     textLbl.Parent = btn
-    
-    local arrow = Instance.new("TextLabel")
-    arrow.Size = UDim2.new(0, 20, 1, 0)
-    arrow.Position = UDim2.new(1, -20, 0, 0)
-    arrow.BackgroundTransparency = 1
-    arrow.Text = "›"
-    arrow.TextColor3 = Color3.fromRGB(100, 100, 100)
-    arrow.TextSize = 16
-    arrow.Font = Enum.Font.GothamBold
-    arrow.Parent = btn
     
     btn.MouseEnter:Connect(function()
         if currentTab ~= name then
