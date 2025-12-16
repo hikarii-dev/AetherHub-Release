@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether Hub - Step 1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .success {
+            color: #28a745;
+            font-size: 48px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 Aether Hub</h1>
+        <div class="step">
+            <div class="success">✅</div>
+            <h2 style="margin: 20px 0;">Step 1 Complete!</h2>
+            <p>Your key request has been saved.</p>
+        </div>
+        
+        <div class="step">
+            <h3>📱 Next Step:</h3>
+            <p>Click the button below to complete 1 ad checkpoint</p>
+            <a href="#" id="linkvertiseBtn" class="btn">Continue to Linkvertise →</a>
+        </div>
+        
+        <p style="margin-top: 20px; color: #666; font-size: 14px;">
+            After completing the ad, you'll automatically receive your key!
+        </p>
+    </div>
+
+    <script>
+        // Get token and duration from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const duration = urlParams.get('duration') || '3h';
+        
+        if (token) {
+            // Save token to localStorage
+            localStorage.setItem('aether_token', token);
+            localStorage.setItem('aether_duration', duration);
+            localStorage.setItem('aether_timestamp', Date.now());
+            
+            // Set Linkvertise URL based on duration
+            const linkvertiseUrls = {
+                '3h': 'https://link-hub.net/2492639/F5hLLRGhoqWt'
+            };
+            
+            const linkvertiseUrl = linkvertiseUrls[duration] || linkvertiseUrls['3h'];
+            document.getElementById('linkvertiseBtn').href = linkvertiseUrl;
+            
+            console.log('Token saved:', token);
+        } else {
+            document.body.innerHTML = '<div class="container"><h1>❌ Error</h1><p>Missing token parameter</p></div>';
+        }
+    </script>
+</body>
+</html>
