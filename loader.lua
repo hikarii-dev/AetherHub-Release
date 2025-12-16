@@ -17,13 +17,17 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local function verifyKey(key, gameId)
     local success, response = pcall(function()
         local url = API_URL .. "/verify?key=" .. key .. "&hwid=" .. HWID .. "&game=" .. gameId
+        print("[Aether Hub] Verifying:", url)
+        
         local data = game:HttpGet(url)
+        print("[Aether Hub] Response:", data)
+        
         return HttpService:JSONDecode(data)
     end)
     
     if not success then
-        warn("[Aether Hub] API Error:", response)
-        return false, nil, "API error"
+        warn("[Aether Hub] Verify API Error:", response)
+        return false, nil, "Connection failed. Check Railway!"
     end
     
     if response.valid then
@@ -37,20 +41,24 @@ end
 local function reserveTrialKey(gameId)
     local success, response = pcall(function()
         local url = API_URL .. "/reserve-trial?game=" .. gameId
+        print("[Aether Hub] Requesting:", url)
+        
         local data = game:HttpGet(url)
+        print("[Aether Hub] Response:", data)
+        
         return HttpService:JSONDecode(data)
     end)
     
     if not success then
-        warn("[Aether Hub] API Error:", response)
-        return false, "API error"
+        warn("[Aether Hub] Reserve API Error:", response)
+        return false, "Connection failed. Check Railway logs!"
     end
     
     if response.success then
         return true, response.key
     end
     
-    return false, response.message or response.reason
+    return false, response.message or response.reason or "Unknown error"
 end
 
 -- Main Hub Window
