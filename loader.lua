@@ -490,8 +490,9 @@ local function ShowKeyAccessPage()
             -- Add game buttons to sidebar
             task.wait(0.5)
             for i, gameConfig in ipairs(GAMES) do
-                CreateSidebarButton(gameConfig.name, gameConfig.icon, 60 + ((i - 1) * 48), function()
-                    ShowGamePage(gameConfig)
+                local config = gameConfig -- Сохраняем ссылку для closure
+                CreateSidebarButton(config.name, config.icon, 60 + ((i - 1) * 48), function()
+                    ShowGamePage(config)
                 end)
             end
         else
