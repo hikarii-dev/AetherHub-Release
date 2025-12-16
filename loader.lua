@@ -483,7 +483,6 @@ local function ShowKeyPage()
         if valid then
             Notify("✅ Valid!", "Key verified", 3)
             
-            task.wait(0.5)
             for i, g in ipairs(GAMES) do
                 CreateTab(g.name, g.icon, 48, function()
                     ShowGamePage(g)
@@ -554,17 +553,38 @@ function ShowGamePage(gameData)
     activate.MouseButton1Click:Connect(function()
         Notify("⏳ Loading...", "Please wait...", 2)
         
-        task.wait(0.5)
+        -- Шаг 1: Предзагружаем Rayfield если его нет
+        if not _G.Rayfield then
+            local rayfieldOk, rayfieldLib = pcall(function()
+                local HttpService = game:GetService("HttpService")
+                local rayfieldCode = HttpService:GetAsync('https://sirius.menu/rayfield')
+                return loadstring(rayfieldCode)()
+            end)
+            
+            if rayfieldOk and rayfieldLib then
+                _G.Rayfield = rayfieldLib
+                _G.RayfieldInstance = rayfieldLib
+            else
+                warn("[Aether Hub] Failed to load Rayfield")
+                Notify("❌ Error", "Failed to load UI library", 5)
+                return
+            end
+        end
         
+        task.wait(0.3)
+        
+        -- Шаг 2: Загружаем скрипт игры
         local ok, err = pcall(function()
-            local code = game:GetService("HttpService"):GetAsync(gameData.script_url)
-            loadstring(code)()
+            local HttpService = game:GetService("HttpService")
+            local scriptCode = HttpService:GetAsync(gameData.script_url)
+            local loadedFunction = loadstring(scriptCode)
+            loadedFunction()
         end)
         
         if ok then
             Notify("✅ Loaded!", "Enjoy!", 3)
         else
-            warn("[Aether Hub]", err)
+            warn("[Aether Hub] Load error:", err)
             Notify("❌ Error", "Check F9", 5)
         end
     end)
@@ -598,7 +618,7 @@ function ShowGamePage(gameData)
     infom.BackgroundTransparency = 1
     infom.Text = "✅ Auto Collect Cash\n✅ Auto Rebirth\n✅ Auto Steal & more!"
     infom.TextColor3 = Color3.fromRGB(170, 170, 170)
-    infom.TextSize = 16
+    infom.TextSize = 15
     infom.Font = Enum.Font.Gotham
     infom.TextXAlignment = Enum.TextXAlignment.Left
     infom.TextYAlignment = Enum.TextYAlignment.Top
