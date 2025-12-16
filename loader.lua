@@ -57,11 +57,11 @@ MainFrame.Position = UDim2.new(0.5, -355, 0.5, -225)
 MainFrame.BackgroundTransparency = 1
 MainFrame.Parent = ScreenGui
 
--- Background
+-- Background - ОДИН ЦВЕТ ДЛЯ ВСЕГО
 local Background = Instance.new("Frame")
 Background.Size = UDim2.new(1, 0, 1, 0)
-Background.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-Background.BackgroundTransparency = 0.2
+Background.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Background.BackgroundTransparency = 0.15
 Background.BorderSizePixel = 0
 Background.Parent = MainFrame
 
@@ -69,10 +69,10 @@ local BgCorner = Instance.new("UICorner")
 BgCorner.CornerRadius = UDim.new(0, 8)
 BgCorner.Parent = Background
 
--- TopBar - ТОЧНАЯ ВЫСОТА КАК У NEXO (35px)
+-- TopBar - немного темнее основного фона
 local TopBar = Instance.new("Frame")
 TopBar.Size = UDim2.new(1, 0, 0, 35)
-TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TopBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 TopBar.BorderSizePixel = 0
 TopBar.Parent = MainFrame
 
@@ -83,7 +83,7 @@ TopCorner.Parent = TopBar
 local TopFix = Instance.new("Frame")
 TopFix.Size = UDim2.new(1, 0, 0, 8)
 TopFix.Position = UDim2.new(0, 0, 1, -8)
-TopFix.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TopFix.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 TopFix.BorderSizePixel = 0
 TopFix.Parent = TopBar
 
@@ -136,34 +136,14 @@ CloseBtn.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- Sidebar - ТОЧНАЯ ШИРИНА 220px КАК У NEXO
+-- Sidebar - ПРОЗРАЧНЫЙ, без видимой границы
 local Sidebar = Instance.new("Frame")
 Sidebar.Size = UDim2.new(0, 220, 1, -35)
 Sidebar.Position = UDim2.new(0, 0, 0, 35)
-Sidebar.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-Sidebar.BackgroundTransparency = 0.1
+Sidebar.BackgroundTransparency = 1
 Sidebar.BorderSizePixel = 0
 Sidebar.ClipsDescendants = true
 Sidebar.Parent = MainFrame
-
-local SideCorner = Instance.new("UICorner")
-SideCorner.CornerRadius = UDim.new(0, 8)
-SideCorner.Parent = Sidebar
-
-local SideFix1 = Instance.new("Frame")
-SideFix1.Size = UDim2.new(0, 8, 1, 0)
-SideFix1.Position = UDim2.new(1, -8, 0, 0)
-SideFix1.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-SideFix1.BackgroundTransparency = 0.1
-SideFix1.BorderSizePixel = 0
-SideFix1.Parent = Sidebar
-
-local SideFix2 = Instance.new("Frame")
-SideFix2.Size = UDim2.new(1, 0, 0, 8)
-SideFix2.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-SideFix2.BackgroundTransparency = 0.1
-SideFix2.BorderSizePixel = 0
-SideFix2.Parent = Sidebar
 
 -- Content
 local Content = Instance.new("Frame")
@@ -183,8 +163,8 @@ local function CreateTab(name, icon, yPos, callback)
     btn.Name = name
     btn.Size = UDim2.new(1, -10, 0, 38)  -- КОМПАКТНЫЙ РАЗМЕР 38px
     btn.Position = UDim2.new(0, 5, 0, yPos)
-    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    btn.BackgroundTransparency = 0.5
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.BackgroundTransparency = 0.3
     btn.BorderSizePixel = 0
     btn.AutoButtonColor = false
     btn.Text = ""
@@ -241,13 +221,13 @@ local function CreateTab(name, icon, yPos, callback)
     
     btn.MouseEnter:Connect(function()
         if currentTab ~= name then
-            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.3}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.1}):Play()
         end
     end)
     
     btn.MouseLeave:Connect(function()
         if currentTab ~= name then
-            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.5}):Play()
+            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.3}):Play()
         end
     end)
     
@@ -259,10 +239,10 @@ local function CreateTab(name, icon, yPos, callback)
             if b:IsA("TextButton") then
                 local barItem = b:FindFirstChild("Bar")
                 if b.Name == name then
-                    b.BackgroundTransparency = 0.3
+                    b.BackgroundTransparency = 0.1
                     if barItem then barItem.Visible = true end
                 else
-                    b.BackgroundTransparency = 0.5
+                    b.BackgroundTransparency = 0.3
                     if barItem then barItem.Visible = false end
                 end
             end
@@ -607,7 +587,7 @@ ShowKeyPage()
 task.wait(0.05)
 local firstBtn = Sidebar:FindFirstChild("Key Access")
 if firstBtn then
-    firstBtn.BackgroundTransparency = 0.3
+    firstBtn.BackgroundTransparency = 0.1
     local bar = firstBtn:FindFirstChild("Bar")
     if bar then bar.Visible = true end
 end
