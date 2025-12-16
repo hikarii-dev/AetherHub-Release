@@ -556,16 +556,21 @@ function ShowGamePage(gameData)
         -- Шаг 1: Предзагружаем Rayfield если его нет
         if not _G.Rayfield then
             local rayfieldOk, rayfieldLib = pcall(function()
-                local HttpService = game:GetService("HttpService")
-                local rayfieldCode = HttpService:GetAsync('https://sirius.menu/rayfield')
-                return loadstring(rayfieldCode)()
+                local success, result = pcall(function()
+                    return game:HttpGet('https://sirius.menu/rayfield', true)
+                end)
+                if success then
+                    local func = loadstring(result)
+                    return func()
+                end
+                return nil
             end)
             
             if rayfieldOk and rayfieldLib then
                 _G.Rayfield = rayfieldLib
                 _G.RayfieldInstance = rayfieldLib
             else
-                warn("[Aether Hub] Failed to load Rayfield")
+                warn("[Aether Hub] Failed to load Rayfield:", rayfieldLib)
                 Notify("❌ Error", "Failed to load UI library", 5)
                 return
             end
@@ -575,8 +580,7 @@ function ShowGamePage(gameData)
         
         -- Шаг 2: Загружаем скрипт игры
         local ok, err = pcall(function()
-            local HttpService = game:GetService("HttpService")
-            local scriptCode = HttpService:GetAsync(gameData.script_url)
+            local scriptCode = game:HttpGet(gameData.script_url, true)
             local loadedFunction = loadstring(scriptCode)
             loadedFunction()
         end)
