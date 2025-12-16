@@ -17,21 +17,11 @@
   ],
   "keys": {
     "verification_url": "https://discord.gg/2fpWv8B9ch",
-    "check_endpoint": "https://raw.githubusercontent.com/hikarii-dev/AetherHub-Release/main/api/verify.php",
+    "check_endpoint": "https://discord-production-215b.up.railway.app/verify",
     "pricing": {
       "3h": {
         "duration": 10800,
         "checkpoints": 1,
-        "type": "free"
-      },
-      "12h": {
-        "duration": 43200,
-        "checkpoints": 3,
-        "type": "free"
-      },
-      "24h": {
-        "duration": 86400,
-        "checkpoints": 5,
         "type": "free"
       },
       "monthly": {
