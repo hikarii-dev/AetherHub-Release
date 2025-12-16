@@ -84,8 +84,8 @@ TopCorner.Parent = TopBar
 local Divider = Instance.new("Frame")
 Divider.Size = UDim2.new(1, -16, 0, 1)
 Divider.Position = UDim2.new(0, 8, 1, 0)
-Divider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-Divider.BackgroundTransparency = 0.7
+Divider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Divider.BackgroundTransparency = 0.85
 Divider.BorderSizePixel = 0
 Divider.Parent = TopBar
 
@@ -113,7 +113,7 @@ Title.Parent = TopBar
 
 local Subtitle = Instance.new("TextLabel")
 Subtitle.Size = UDim2.new(0, 200, 1, 0)
-Subtitle.Position = UDim2.new(0, 130, 0, 0)
+Subtitle.Position = UDim2.new(0, 118, 0, 0)
 Subtitle.BackgroundTransparency = 1
 Subtitle.Text = "Key System Loaded!"
 Subtitle.TextColor3 = Color3.fromRGB(120, 120, 120)
@@ -299,39 +299,47 @@ local function ShowKeyPage()
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = page
     
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, 0, 0, 16)
-    label.Position = UDim2.new(0, 0, 0, 42)
-    label.BackgroundTransparency = 1
-    label.Text = "Enter Your Key:"
-    label.TextColor3 = Color3.fromRGB(160, 160, 160)
-    label.TextSize = 11
-    label.Font = Enum.Font.Gotham
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Parent = page
+    -- Input с label ВНУТРИ
+    local inputContainer = Instance.new("Frame")
+    inputContainer.Size = UDim2.new(1, 0, 0, 38)
+    inputContainer.Position = UDim2.new(0, 0, 0, 45)
+    inputContainer.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+    inputContainer.BackgroundTransparency = 0.3
+    inputContainer.BorderSizePixel = 0
+    inputContainer.Parent = page
+    
+    local containerCorner = Instance.new("UICorner")
+    containerCorner.CornerRadius = UDim.new(0, 5)
+    containerCorner.Parent = inputContainer
+    
+    local inputLabel = Instance.new("TextLabel")
+    inputLabel.Size = UDim2.new(0, 120, 1, 0)
+    inputLabel.Position = UDim2.new(0, 10, 0, 0)
+    inputLabel.BackgroundTransparency = 1
+    inputLabel.Text = "Enter Your Key:"
+    inputLabel.TextColor3 = Color3.fromRGB(140, 140, 140)
+    inputLabel.TextSize = 11
+    inputLabel.Font = Enum.Font.Gotham
+    inputLabel.TextXAlignment = Enum.TextXAlignment.Left
+    inputLabel.Parent = inputContainer
     
     local input = Instance.new("TextBox")
-    input.Size = UDim2.new(1, 0, 0, 38)  -- КОМПАКТНЫЙ
-    input.Position = UDim2.new(0, 0, 0, 62)
-    input.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
-    input.BackgroundTransparency = 0.3
-    input.BorderSizePixel = 0
+    input.Size = UDim2.new(1, -130, 1, 0)
+    input.Position = UDim2.new(0, 130, 0, 0)
+    input.BackgroundTransparency = 1
     input.PlaceholderText = "Example: alot of random"
     input.PlaceholderColor3 = Color3.fromRGB(90, 90, 90)
     input.Text = ""
     input.TextColor3 = Color3.fromRGB(210, 210, 210)
     input.TextSize = 12
     input.Font = Enum.Font.Gotham
+    input.TextXAlignment = Enum.TextXAlignment.Right
     input.ClearTextOnFocus = false
-    input.Parent = page
+    input.Parent = inputContainer
     
-    local ic = Instance.new("UICorner")
-    ic.CornerRadius = UDim.new(0, 5)
-    ic.Parent = input
-    
-    local ip = Instance.new("UIPadding")
-    ip.PaddingLeft = UDim.new(0, 10)
-    ip.Parent = input
+    local inputPadding = Instance.new("UIPadding")
+    inputPadding.PaddingRight = UDim.new(0, 10)
+    inputPadding.Parent = input
     
     local function Btn(txt, ico, y, cb)
         local b = Instance.new("TextButton")
@@ -391,7 +399,7 @@ local function ShowKeyPage()
         b.MouseButton1Click:Connect(cb)
     end
     
-    Btn("Get Key (Copy Discord)", "🔑", 108, function()
+    Btn("Get Key (Copy Discord)", "🔑", 93, function()
         if setclipboard then
             setclipboard(DISCORD_INVITE)
             Notify("✅ Copied!", "Join Discord → #get-key", 4)
@@ -400,14 +408,14 @@ local function ShowKeyPage()
         end
     end)
     
-    Btn("Buy Permanent Key", "💰", 152, function()
+    Btn("Buy Permanent Key", "💰", 137, function()
         if setclipboard then
             setclipboard(DISCORD_INVITE)
             Notify("💎 Premium", "$5/mo, $10/3mo", 5)
         end
     end)
     
-    Btn("Verify Key", "✅", 196, function()
+    Btn("Verify Key", "✅", 181, function()
         local key = input.Text
         if key == "" then
             Notify("❌ Error", "Enter key first", 2)
