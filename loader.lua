@@ -127,20 +127,11 @@ local MinimizeBtn = Instance.new("TextButton")
 MinimizeBtn.Size = UDim2.new(0, 40, 0, 35)
 MinimizeBtn.Position = UDim2.new(1, -120, 0, 0)
 MinimizeBtn.BackgroundTransparency = 1
-MinimizeBtn.Text = "─"
+MinimizeBtn.Text = "—"
 MinimizeBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-MinimizeBtn.TextSize = 16
+MinimizeBtn.TextSize = 14
 MinimizeBtn.Font = Enum.Font.GothamBold
 MinimizeBtn.Parent = TopBar
-
-MinimizeBtn.MouseEnter:Connect(function()
-    MinimizeBtn.BackgroundTransparency = 0.9
-    MinimizeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-end)
-
-MinimizeBtn.MouseLeave:Connect(function()
-    MinimizeBtn.BackgroundTransparency = 1
-end)
 
 MinimizeBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
@@ -151,20 +142,11 @@ local MaximizeBtn = Instance.new("TextButton")
 MaximizeBtn.Size = UDim2.new(0, 40, 0, 35)
 MaximizeBtn.Position = UDim2.new(1, -80, 0, 0)
 MaximizeBtn.BackgroundTransparency = 1
-MaximizeBtn.Text = "□"
+MaximizeBtn.Text = "☐"
 MaximizeBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-MaximizeBtn.TextSize = 16
+MaximizeBtn.TextSize = 13
 MaximizeBtn.Font = Enum.Font.GothamBold
 MaximizeBtn.Parent = TopBar
-
-MaximizeBtn.MouseEnter:Connect(function()
-    MaximizeBtn.BackgroundTransparency = 0.9
-    MaximizeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-end)
-
-MaximizeBtn.MouseLeave:Connect(function()
-    MaximizeBtn.BackgroundTransparency = 1
-end)
 
 local isMaximized = false
 local savedPosition = UDim2.new(0.5, -355, 0.5, -225)
@@ -193,20 +175,11 @@ local CloseBtn = Instance.new("TextButton")
 CloseBtn.Size = UDim2.new(0, 40, 0, 35)
 CloseBtn.Position = UDim2.new(1, -40, 0, 0)
 CloseBtn.BackgroundTransparency = 1
-CloseBtn.Text = "✕"
+CloseBtn.Text = "×"
 CloseBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-CloseBtn.TextSize = 16
+CloseBtn.TextSize = 20
 CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.Parent = TopBar
-
-CloseBtn.MouseEnter:Connect(function()
-    CloseBtn.BackgroundTransparency = 0.8
-    CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-end)
-
-CloseBtn.MouseLeave:Connect(function()
-    CloseBtn.BackgroundTransparency = 1
-end)
 
 CloseBtn.MouseButton1Click:Connect(function()
     BlurEffect:Destroy()
