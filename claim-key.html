@@ -138,10 +138,23 @@
     </div>
 
     <script>
-        // Get token from URL
+        // Try to get token from URL first, then localStorage
         const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        const duration = urlParams.get('duration') || '3h';
+        let token = urlParams.get('token');
+        let duration = urlParams.get('duration');
+        
+        // If not in URL, check localStorage
+        if (!token) {
+            token = localStorage.getItem('aether_token');
+            duration = localStorage.getItem('aether_duration') || '3h';
+            
+            // Check if token is recent (within 10 minutes)
+            const timestamp = localStorage.getItem('aether_timestamp');
+            if (timestamp && (Date.now() - parseInt(timestamp)) > 600000) {
+                // Token expired
+                token = null;
+            }
+        }
         
         // API endpoint (Railway)
         const API_URL = 'https://discord-production-215b.up.railway.app';
@@ -149,6 +162,7 @@
         async function claimKey() {
             if (!token) {
                 showError();
+                document.querySelector('.subtitle').textContent = 'No token found. Please start from Discord.';
                 return;
             }
             
@@ -158,6 +172,11 @@
                 const data = await response.json();
                 
                 if (data.success && data.key) {
+                    // Clear localStorage after successful claim
+                    localStorage.removeItem('aether_token');
+                    localStorage.removeItem('aether_duration');
+                    localStorage.removeItem('aether_timestamp');
+                    
                     showKey(data.key, data.duration);
                 } else {
                     showError();
