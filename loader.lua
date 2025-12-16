@@ -1,5 +1,5 @@
--- Aether Hub v4.0
--- Pool-based key system with per-game activation
+-- Aether Hub v4.1
+-- Token-based system - Keys ONLY after Linkvertise
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
@@ -37,11 +37,11 @@ local function verifyKey(key, gameId)
     return false, response.reason, response.message
 end
 
--- Reserve trial key
-local function reserveTrialKey(gameId)
+-- Create token (NOT key!)
+local function createToken(gameId)
     local success, response = pcall(function()
-        local url = API_URL .. "/reserve-trial?game=" .. gameId
-        print("[Aether Hub] Requesting:", url)
+        local url = API_URL .. "/create-token?game=" .. gameId
+        print("[Aether Hub] Creating token for:", gameId)
         
         local data = game:HttpGet(url)
         print("[Aether Hub] Response:", data)
@@ -50,12 +50,12 @@ local function reserveTrialKey(gameId)
     end)
     
     if not success then
-        warn("[Aether Hub] Reserve API Error:", response)
-        return false, "Connection failed. Check Railway logs!"
+        warn("[Aether Hub] Token API Error:", response)
+        return false, "Connection failed. Check Railway!"
     end
     
     if response.success then
-        return true, response.key
+        return true, response.token
     end
     
     return false, response.message or response.reason or "Unknown error"
@@ -63,7 +63,7 @@ end
 
 -- Main Hub Window
 local Window = Rayfield:CreateWindow({
-    Name = "🌟 Aether Hub v4.0",
+    Name = "🌟 Aether Hub v4.1",
     LoadingTitle = "Aether Hub",
     LoadingSubtitle = "by hikarii.dev",
     ConfigurationSaving = {
@@ -100,7 +100,7 @@ for _, game in ipairs(GAMES) do
     
     gameTab:CreateInput({
         Name = "Key",
-        PlaceholderText = "AETH-XXXX-XXXX",
+        PlaceholderText = "AETH-TRIAL-XXXXXXXX",
         RemoveTextAfterFocusLost = false,
         Callback = function(Text)
             keyInput = Text
@@ -134,7 +134,8 @@ for _, game in ipairs(GAMES) do
                 if keyTypeOrMessage == "trial" then
                     local timeLeft = expiresOrReason - os.time()
                     local hoursLeft = math.floor(timeLeft / 3600)
-                    expiryText = hoursLeft .. " hours"
+                    local minsLeft = math.floor((timeLeft % 3600) / 60)
+                    expiryText = hoursLeft .. "h " .. minsLeft .. "m"
                 elseif expiresOrReason then
                     local timeLeft = expiresOrReason - os.time()
                     local daysLeft = math.floor(timeLeft / 86400)
@@ -161,6 +162,15 @@ for _, game in ipairs(GAMES) do
                                     local valid, _, _ = verifyKey(keyInput, game.id)
                                     if not valid then
                                         _G.AetherHubKeyValid = false
+                                        
+                                        pcall(function()
+                                            game:GetService("StarterGui"):SetCore("SendNotification", {
+                                                Title = "⏰ Aether Hub",
+                                                Text = "Key expired! Get a new one.",
+                                                Duration = 10
+                                            })
+                                        end)
+                                        
                                         break
                                     end
                                 end
@@ -175,9 +185,23 @@ for _, game in ipairs(GAMES) do
                             
                             task.wait(0.5)
                             
+                            print("[Aether Hub] Loading script from:", game.script_url)
+                            
                             local success, err = pcall(function()
                                 local scriptCode = game:HttpGet(game.script_url, true)
-                                loadstring(scriptCode)()
+                                
+                                if not scriptCode or scriptCode == "" then
+                                    error("Empty script response")
+                                end
+                                
+                                print("[Aether Hub] Script loaded, size:", #scriptCode, "bytes")
+                                
+                                local loadFunc, loadErr = loadstring(scriptCode)
+                                if not loadFunc then
+                                    error("Loadstring failed: " .. tostring(loadErr))
+                                end
+                                
+                                loadFunc()
                             end)
                             
                             if success then
@@ -187,9 +211,10 @@ for _, game in ipairs(GAMES) do
                                     Duration = 3
                                 })
                             else
+                                warn("[Aether Hub] Script load error:", err)
                                 Rayfield:Notify({
-                                    Title = "Error",
-                                    Content = "Failed to load script",
+                                    Title = "❌ Load Error",
+                                    Content = "Check Output (F9) for details",
                                     Duration = 5
                                 })
                             end
@@ -205,18 +230,18 @@ for _, game in ipairs(GAMES) do
                 elseif expiresOrReason == "hwid_mismatch" then
                     errorMsg = "Key is bound to another PC"
                 elseif expiresOrReason == "already_used_in_other_game" then
-                    errorMsg = keyTypeOrMessage or "Key used in another game. Get a new key."
+                    errorMsg = keyTypeOrMessage or "Key used in another game"
                 elseif expiresOrReason == "not_found" then
-                    errorMsg = "Key not found"
-                elseif expiresOrReason == "reservation_expired" then
-                    errorMsg = "Reservation expired. Get a new key."
+                    errorMsg = "Key not found. Did you complete Linkvertise?"
+                elseif expiresOrReason == "claim_expired" then
+                    errorMsg = "Key expired (10 min after claim). Get new one."
                 elseif keyTypeOrMessage then
                     errorMsg = keyTypeOrMessage
                 end
                 
                 Rayfield:Notify({
                     Title = "❌ " .. errorMsg,
-                    Content = "Please check your key or get a new one",
+                    Content = "Check your key or get a new one",
                     Duration = 4
                 })
             end
@@ -229,43 +254,45 @@ for _, game in ipairs(GAMES) do
         Name = "🎁 Get Trial Key (FREE)",
         Callback = function()
             Rayfield:Notify({
-                Title = "Reserving Key...",
+                Title = "Creating Token...",
                 Content = "Please wait...",
                 Duration = 2
             })
             
-            -- Резервируем ключ
-            local success, keyOrMessage = reserveTrialKey(game.id)
+            -- Создаем токен (НЕ ключ!)
+            local success, tokenOrMessage = createToken(game.id)
             
             if success then
-                -- Формируем Linkvertise URL с ключом
-                local fullUrl = LINKVERTISE_URL .. "?key=" .. keyOrMessage
+                -- Формируем Linkvertise URL с ТОКЕНОМ
+                local fullUrl = LINKVERTISE_URL .. "?token=" .. tokenOrMessage
                 
                 if setclipboard then
                     setclipboard(fullUrl)
                     Rayfield:Notify({
                         Title = "✅ Link Copied!",
-                        Content = "Paste in browser to get your trial key (3 hours)",
-                        Duration = 5
+                        Content = "Paste in browser → Complete checkpoint → Get key!",
+                        Duration = 6
                     })
                 else
                     Rayfield:Notify({
-                        Title = "Key Reserved",
-                        Content = "Open: " .. LINKVERTISE_URL,
-                        Duration = 5
+                        Title = "⚠️ Can't Copy",
+                        Content = "Open: " .. LINKVERTISE_URL .. " (Token in console F9)",
+                        Duration = 6
                     })
+                    print("[Aether Hub] Your token:", tokenOrMessage)
+                    print("[Aether Hub] Full URL:", fullUrl)
                 end
             else
-                if keyOrMessage:find("exhausted") then
+                if tokenOrMessage:find("exhausted") then
                     Rayfield:Notify({
-                        Title = "❌ No Trial Keys Left",
+                        Title = "❌ No Keys Left",
                         Content = "Join Discord for premium keys!",
                         Duration = 5
                     })
                 else
                     Rayfield:Notify({
                         Title = "Error",
-                        Content = keyOrMessage,
+                        Content = tokenOrMessage,
                         Duration = 3
                     })
                 end
@@ -296,7 +323,7 @@ for _, game in ipairs(GAMES) do
                 setclipboard(DISCORD_INVITE)
                 Rayfield:Notify({
                     Title = "✅ Copied!",
-                    Content = "Discord link copied to clipboard",
+                    Content = "Discord link copied",
                     Duration = 3
                 })
             end
@@ -307,10 +334,19 @@ end
 -- Info Tab
 local InfoTab = Window:CreateTab("ℹ️ Info", nil)
 
+InfoTab:CreateSection("How to Get Trial Key")
+
+InfoTab:CreateLabel("1️⃣ Click 'Get Trial Key (FREE)'")
+InfoTab:CreateLabel("2️⃣ Linkvertise link copied")
+InfoTab:CreateLabel("3️⃣ Paste in browser")
+InfoTab:CreateLabel("4️⃣ Complete checkpoint")
+InfoTab:CreateLabel("5️⃣ Get your key!")
+InfoTab:CreateLabel("6️⃣ Paste key here & verify")
+
 InfoTab:CreateSection("Pricing")
 
 InfoTab:CreateLabel("🎁 Trial: FREE (3 hours)")
-InfoTab:CreateLabel("   Get via Linkvertise")
+InfoTab:CreateLabel("   Via Linkvertise checkpoint")
 InfoTab:CreateLabel("   One key per game")
 
 InfoTab:CreateLabel("")
@@ -324,7 +360,6 @@ InfoTab:CreateLabel("")
 InfoTab:CreateLabel("💎 3 Months: $10")
 InfoTab:CreateLabel("   90 days access")
 InfoTab:CreateLabel("   All games included")
-InfoTab:CreateLabel("   Save $5!")
 
 InfoTab:CreateSection("Supported Games")
 
