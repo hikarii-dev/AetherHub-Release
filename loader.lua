@@ -147,9 +147,6 @@ local function createHub(config)
     for _, game in ipairs(config.games) do
         local section = GamesTab:CreateSection(game.name)
         
-        -- Check if player is in the correct game
-        local isCorrectGame = game.placeId == game.PlaceId
-        
         -- Check for saved key
         local hasSavedKey, savedKeyData = checkSavedKey(game.id)
         
@@ -246,20 +243,10 @@ local function createHub(config)
                 end
             })
         else
-            -- Launch Game Button (key already saved)
+            -- Launch Script Button (key already saved)
             GamesTab:CreateButton({
-                Name = "🚀 Launch Game",
+                Name = "🚀 Launch Script",
                 Callback = function()
-                    -- Check if in correct game
-                    if game.placeId ~= game.PlaceId then
-                        Rayfield:Notify({
-                            Title = "Wrong Game",
-                            Content = "Please join " .. game.name,
-                            Duration = 3,
-                        })
-                        return
-                    end
-                    
                     loadGame(game)
                 end
             })
