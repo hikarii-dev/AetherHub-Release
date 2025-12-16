@@ -250,7 +250,7 @@ local function CreateTab(name, icon, yPos, callback)
     textLbl.BackgroundTransparency = 1
     textLbl.Text = name
     textLbl.TextColor3 = Color3.fromRGB(190, 190, 190)
-    textLbl.TextSize = 12
+    textLbl.TextSize = 14
     textLbl.Font = Enum.Font.Gotham
     textLbl.TextXAlignment = Enum.TextXAlignment.Left
     textLbl.Parent = btn
@@ -304,18 +304,18 @@ local function Notify(title, msg, dur)
     nt.BackgroundTransparency = 1
     nt.Text = title
     nt.TextColor3 = Color3.fromRGB(255, 255, 255)
-    nt.TextSize = 12
+    nt.TextSize = 24
     nt.Font = Enum.Font.GothamBold
     nt.TextXAlignment = Enum.TextXAlignment.Left
     nt.Parent = notif
     
     local nm = Instance.new("TextLabel")
     nm.Size = UDim2.new(1, -14, 0, 32)
-    nm.Position = UDim2.new(0, 10, 0, 28)
+    nm.Position = UDim2.new(0, 10, 0, 32)
     nm.BackgroundTransparency = 1
     nm.Text = msg
     nm.TextColor3 = Color3.fromRGB(170, 170, 170)
-    nm.TextSize = 10
+    nm.TextSize = 20
     nm.Font = Enum.Font.Gotham
     nm.TextXAlignment = Enum.TextXAlignment.Left
     nm.TextWrapped = true
@@ -485,7 +485,7 @@ local function ShowKeyPage()
             
             task.wait(0.5)
             for i, g in ipairs(GAMES) do
-                CreateTab(g.name, g.icon, 48 + (i * 44), function()
+                CreateTab(g.name, g.icon, 48, function()
                     ShowGamePage(g)
                 end)
             end
@@ -521,22 +521,9 @@ function ShowGamePage(game)
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = page
     
-    local desc = Instance.new("TextLabel")
-    desc.Size = UDim2.new(1, 0, 0, 40)
-    desc.Position = UDim2.new(0, 0, 0, 40)
-    desc.BackgroundTransparency = 1
-    desc.Text = "Script ready to activate.\nClick button below to start."
-    desc.TextColor3 = Color3.fromRGB(150, 150, 150)
-    desc.TextSize = 11
-    desc.Font = Enum.Font.Gotham
-    desc.TextXAlignment = Enum.TextXAlignment.Left
-    desc.TextYAlignment = Enum.TextYAlignment.Top
-    desc.TextWrapped = true
-    desc.Parent = page
-    
     local activate = Instance.new("TextButton")
     activate.Size = UDim2.new(1, 0, 0, 44)
-    activate.Position = UDim2.new(0, 0, 0, 92)
+    activate.Position = UDim2.new(0, 0, 0, 45)
     activate.BackgroundColor3 = Color3.fromRGB(60, 180, 75)
     activate.BorderSizePixel = 0
     activate.Text = ""
@@ -584,7 +571,7 @@ function ShowGamePage(game)
     
     local info = Instance.new("Frame")
     info.Size = UDim2.new(1, 0, 0, 80)
-    info.Position = UDim2.new(0, 0, 0, 148)
+    info.Position = UDim2.new(0, 0, 0, 101)
     info.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
     info.BackgroundTransparency = 0.4
     info.BorderSizePixel = 0
@@ -600,18 +587,18 @@ function ShowGamePage(game)
     infot.BackgroundTransparency = 1
     infot.Text = "ℹ️ Script Info"
     infot.TextColor3 = Color3.fromRGB(255, 255, 255)
-    infot.TextSize = 12
+    infot.TextSize = 36
     infot.Font = Enum.Font.GothamBold
     infot.TextXAlignment = Enum.TextXAlignment.Left
     infot.Parent = info
     
     local infom = Instance.new("TextLabel")
     infom.Size = UDim2.new(1, -14, 0, 46)
-    infom.Position = UDim2.new(0, 10, 0, 30)
+    infom.Position = UDim2.new(0, 10, 0, 34)
     infom.BackgroundTransparency = 1
     infom.Text = "✅ Auto Collect Cash\n✅ Auto Rebirth\n✅ Auto Steal & more!"
     infom.TextColor3 = Color3.fromRGB(170, 170, 170)
-    infom.TextSize = 10
+    infom.TextSize = 20
     infom.Font = Enum.Font.Gotham
     infom.TextXAlignment = Enum.TextXAlignment.Left
     infom.TextYAlignment = Enum.TextYAlignment.Top
