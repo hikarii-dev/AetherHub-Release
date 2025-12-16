@@ -80,7 +80,14 @@ local TopCorner = Instance.new("UICorner")
 TopCorner.CornerRadius = UDim.new(0, 8)
 TopCorner.Parent = TopBar
 
--- TopFix не нужен если прозрачный
+-- БЕЛЫЙ РАЗДЕЛИТЕЛЬ под топбаром
+local Divider = Instance.new("Frame")
+Divider.Size = UDim2.new(1, -16, 0, 1)
+Divider.Position = UDim2.new(0, 8, 1, 0)
+Divider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+Divider.BackgroundTransparency = 0.7
+Divider.BorderSizePixel = 0
+Divider.Parent = TopBar
 
 -- Title
 local TitleIcon = Instance.new("TextLabel")
@@ -106,10 +113,10 @@ Title.Parent = TopBar
 
 local Subtitle = Instance.new("TextLabel")
 Subtitle.Size = UDim2.new(0, 200, 1, 0)
-Subtitle.Position = UDim2.new(0, 160, 0, 0)
+Subtitle.Position = UDim2.new(0, 130, 0, 0)
 Subtitle.BackgroundTransparency = 1
 Subtitle.Text = "Key System Loaded!"
-Subtitle.TextColor3 = Color3.fromRGB(140, 140, 140)
+Subtitle.TextColor3 = Color3.fromRGB(120, 120, 120)
 Subtitle.TextSize = 11
 Subtitle.Font = Enum.Font.Gotham
 Subtitle.TextXAlignment = Enum.TextXAlignment.Left
@@ -158,11 +165,16 @@ local function CreateTab(name, icon, yPos, callback)
     btn.Name = name
     btn.Size = UDim2.new(1, -8, 0, 34)
     btn.Position = UDim2.new(0, 4, 0, yPos)
+    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     btn.BackgroundTransparency = 1
     btn.BorderSizePixel = 0
     btn.AutoButtonColor = false
     btn.Text = ""
     btn.Parent = Sidebar
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 5)
+    corner.Parent = btn
     
     -- Highlight bar
     local bar = Instance.new("Frame")
@@ -205,8 +217,10 @@ local function CreateTab(name, icon, yPos, callback)
             if b:IsA("TextButton") then
                 local barItem = b:FindFirstChild("Bar")
                 if b.Name == name then
+                    b.BackgroundTransparency = 0.7
                     if barItem then barItem.Visible = true end
                 else
+                    b.BackgroundTransparency = 1
                     if barItem then barItem.Visible = false end
                 end
             end
@@ -323,9 +337,11 @@ local function ShowKeyPage()
         local b = Instance.new("TextButton")
         b.Size = UDim2.new(1, 0, 0, 38)  -- КОМПАКТНЫЙ 38px
         b.Position = UDim2.new(0, 0, 0, y)
-        b.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
-        b.BackgroundTransparency = 0.3
-        b.BorderSizePixel = 0
+        b.BackgroundColor3 = Color3.fromRGB(48, 48, 48)
+        b.BackgroundTransparency = 0.2
+        b.BorderSizePixel = 1
+        b.BorderColor3 = Color3.fromRGB(65, 65, 65)
+        b.BorderMode = Enum.BorderMode.Inset
         b.Text = ""
         b.AutoButtonColor = false
         b.Parent = page
@@ -551,6 +567,7 @@ ShowKeyPage()
 task.wait(0.05)
 local firstBtn = Sidebar:FindFirstChild("Key Access")
 if firstBtn then
+    firstBtn.BackgroundTransparency = 0.7
     local bar = firstBtn:FindFirstChild("Bar")
     if bar then bar.Visible = true end
 end
