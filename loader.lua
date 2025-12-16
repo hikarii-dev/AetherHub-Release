@@ -159,13 +159,11 @@ MaximizeBtn.MouseButton1Click:Connect(function()
         savedSize = MainFrame.Size
         MainFrame.Position = UDim2.new(0, 0, 0, 0)
         MainFrame.Size = UDim2.new(1, 0, 1, 0)
-        MaximizeBtn.Text = "❐"
         isMaximized = true
     else
         -- Restore
         MainFrame.Position = savedPosition
         MainFrame.Size = savedSize
-        MaximizeBtn.Text = "□"
         isMaximized = false
     end
 end)
@@ -252,7 +250,7 @@ local function CreateTab(name, icon, yPos, callback)
     textLbl.BackgroundTransparency = 1
     textLbl.Text = name
     textLbl.TextColor3 = Color3.fromRGB(190, 190, 190)
-    textLbl.TextSize = 11
+    textLbl.TextSize = 12
     textLbl.Font = Enum.Font.Gotham
     textLbl.TextXAlignment = Enum.TextXAlignment.Left
     textLbl.Parent = btn
@@ -420,7 +418,7 @@ local function ShowKeyPage()
         bi.BackgroundTransparency = 1
         bi.Text = ico
         bi.TextColor3 = Color3.fromRGB(255, 255, 255)
-        bi.TextSize = 15
+        bi.TextSize = 14
         bi.Parent = b
         
         local bt = Instance.new("TextLabel")
