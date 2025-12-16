@@ -176,8 +176,11 @@ local function loadGame(gameScript, currentKey, Window)
     
     task.wait(0.5)
     
-    -- Start background key checker
+    -- Start background key checker ПЕРЕД загрузкой скрипта
     startKeyChecker(currentKey, Window)
+    
+    -- Даем время установиться _G.AetherHubKeyValid
+    task.wait(0.5)
     
     local success, err = pcall(function()
         local scriptCode = game:HttpGet(gameScript, true)
@@ -185,7 +188,17 @@ local function loadGame(gameScript, currentKey, Window)
     end)
     
     if success then
-        Rayfield:Destroy()
+        -- НЕ удаляем Hub! Просто скрываем его
+        -- Rayfield:Destroy() -- УБРАЛИ ЭТУ СТРОКУ!
+        
+        -- Уведомление об успешной загрузке
+        pcall(function()
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "✅ Script Loaded",
+                Text = "Enjoy! Hub is hidden (press RightShift to toggle)",
+                Duration = 5
+            })
+        end)
     else
         Rayfield:Notify({
             Title = "Error",
