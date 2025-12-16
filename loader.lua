@@ -122,6 +122,35 @@ Subtitle.Font = Enum.Font.Gotham
 Subtitle.TextXAlignment = Enum.TextXAlignment.Left
 Subtitle.Parent = TopBar
 
+-- Window Control Buttons
+local MinimizeBtn = Instance.new("TextButton")
+MinimizeBtn.Size = UDim2.new(0, 35, 1, 0)
+MinimizeBtn.Position = UDim2.new(1, -105, 0, 0)
+MinimizeBtn.BackgroundTransparency = 1
+MinimizeBtn.Text = "─"
+MinimizeBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+MinimizeBtn.TextSize = 14
+MinimizeBtn.Font = Enum.Font.GothamBold
+MinimizeBtn.Parent = TopBar
+
+MinimizeBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
+local MaximizeBtn = Instance.new("TextButton")
+MaximizeBtn.Size = UDim2.new(0, 35, 1, 0)
+MaximizeBtn.Position = UDim2.new(1, -70, 0, 0)
+MaximizeBtn.BackgroundTransparency = 1
+MaximizeBtn.Text = "□"
+MaximizeBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+MaximizeBtn.TextSize = 14
+MaximizeBtn.Font = Enum.Font.GothamBold
+MaximizeBtn.Parent = TopBar
+
+MaximizeBtn.MouseButton1Click:Connect(function()
+    -- Toggle maximize (можно добавить логику)
+end)
+
 -- Close
 local CloseBtn = Instance.new("TextButton")
 CloseBtn.Size = UDim2.new(0, 35, 1, 0)
@@ -299,45 +328,40 @@ local function ShowKeyPage()
     title.TextXAlignment = Enum.TextXAlignment.Left
     title.Parent = page
     
-    -- Input с label ВНУТРИ
-    local inputContainer = Instance.new("Frame")
-    inputContainer.Size = UDim2.new(1, 0, 0, 38)
-    inputContainer.Position = UDim2.new(0, 0, 0, 45)
-    inputContainer.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
-    inputContainer.BackgroundTransparency = 0.3
-    inputContainer.BorderSizePixel = 0
-    inputContainer.Parent = page
-    
-    local containerCorner = Instance.new("UICorner")
-    containerCorner.CornerRadius = UDim.new(0, 5)
-    containerCorner.Parent = inputContainer
-    
+    -- Label слева
     local inputLabel = Instance.new("TextLabel")
-    inputLabel.Size = UDim2.new(0, 120, 1, 0)
-    inputLabel.Position = UDim2.new(0, 10, 0, 0)
+    inputLabel.Size = UDim2.new(0, 130, 0, 38)
+    inputLabel.Position = UDim2.new(0, 0, 0, 45)
     inputLabel.BackgroundTransparency = 1
     inputLabel.Text = "Enter Your Key:"
     inputLabel.TextColor3 = Color3.fromRGB(140, 140, 140)
     inputLabel.TextSize = 11
     inputLabel.Font = Enum.Font.Gotham
     inputLabel.TextXAlignment = Enum.TextXAlignment.Left
-    inputLabel.Parent = inputContainer
+    inputLabel.Parent = page
     
+    -- Input поле СПРАВА
     local input = Instance.new("TextBox")
-    input.Size = UDim2.new(1, -130, 1, 0)
-    input.Position = UDim2.new(0, 130, 0, 0)
-    input.BackgroundTransparency = 1
-    input.PlaceholderText = "Example: alot of random"
+    input.Size = UDim2.new(1, -140, 0, 38)
+    input.Position = UDim2.new(0, 140, 0, 45)
+    input.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+    input.BackgroundTransparency = 0.3
+    input.BorderSizePixel = 0
+    input.PlaceholderText = "Poelsidjeudj2jaksujskd"
     input.PlaceholderColor3 = Color3.fromRGB(90, 90, 90)
     input.Text = ""
     input.TextColor3 = Color3.fromRGB(210, 210, 210)
     input.TextSize = 12
     input.Font = Enum.Font.Gotham
-    input.TextXAlignment = Enum.TextXAlignment.Right
     input.ClearTextOnFocus = false
-    input.Parent = inputContainer
+    input.Parent = page
+    
+    local inputCorner = Instance.new("UICorner")
+    inputCorner.CornerRadius = UDim.new(0, 5)
+    inputCorner.Parent = input
     
     local inputPadding = Instance.new("UIPadding")
+    inputPadding.PaddingLeft = UDim.new(0, 10)
     inputPadding.PaddingRight = UDim.new(0, 10)
     inputPadding.Parent = input
     
@@ -611,6 +635,15 @@ end)
 UserInputService.InputChanged:Connect(function(input)
     if input == dragInput and drag then
         update(input)
+    end
+end)
+
+-- Hotkey: Delete or Insert to toggle hub
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    
+    if input.KeyCode == Enum.KeyCode.Delete or input.KeyCode == Enum.KeyCode.Insert then
+        MainFrame.Visible = not MainFrame.Visible
     end
 end)
 
