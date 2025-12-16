@@ -57,11 +57,11 @@ MainFrame.Position = UDim2.new(0.5, -355, 0.5, -225)
 MainFrame.BackgroundTransparency = 1
 MainFrame.Parent = ScreenGui
 
--- Background - ОДИН ЦВЕТ ДЛЯ ВСЕГО
+-- Background - ПРОЗРАЧНЫЙ с blur
 local Background = Instance.new("Frame")
 Background.Size = UDim2.new(1, 0, 1, 0)
-Background.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Background.BackgroundTransparency = 0.15
+Background.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Background.BackgroundTransparency = 0.3
 Background.BorderSizePixel = 0
 Background.Parent = MainFrame
 
@@ -69,10 +69,10 @@ local BgCorner = Instance.new("UICorner")
 BgCorner.CornerRadius = UDim.new(0, 8)
 BgCorner.Parent = Background
 
--- TopBar - ТОГО ЖЕ ЦВЕТА ЧТО И ФОН
+-- TopBar - ПРОЗРАЧНЫЙ
 local TopBar = Instance.new("Frame")
 TopBar.Size = UDim2.new(1, 0, 0, 35)
-TopBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TopBar.BackgroundTransparency = 1
 TopBar.BorderSizePixel = 0
 TopBar.Parent = MainFrame
 
@@ -80,12 +80,7 @@ local TopCorner = Instance.new("UICorner")
 TopCorner.CornerRadius = UDim.new(0, 8)
 TopCorner.Parent = TopBar
 
-local TopFix = Instance.new("Frame")
-TopFix.Size = UDim2.new(1, 0, 0, 8)
-TopFix.Position = UDim2.new(0, 0, 1, -8)
-TopFix.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-TopFix.BorderSizePixel = 0
-TopFix.Parent = TopBar
+-- TopFix не нужен если прозрачный
 
 -- Title
 local TitleIcon = Instance.new("TextLabel")
@@ -161,65 +156,46 @@ local currentTab = "Key Access"
 local function CreateTab(name, icon, yPos, callback)
     local btn = Instance.new("TextButton")
     btn.Name = name
-    btn.Size = UDim2.new(1, -10, 0, 38)  -- КОМПАКТНЫЙ РАЗМЕР 38px
-    btn.Position = UDim2.new(0, 5, 0, yPos)
-    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    btn.BackgroundTransparency = 0.3
+    btn.Size = UDim2.new(1, -8, 0, 34)
+    btn.Position = UDim2.new(0, 4, 0, yPos)
+    btn.BackgroundTransparency = 1
     btn.BorderSizePixel = 0
     btn.AutoButtonColor = false
     btn.Text = ""
     btn.Parent = Sidebar
     
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 5)
-    corner.Parent = btn
-    
     -- Highlight bar
     local bar = Instance.new("Frame")
     bar.Name = "Bar"
-    bar.Size = UDim2.new(0, 3, 1, -4)
-    bar.Position = UDim2.new(0, 2, 0, 2)
+    bar.Size = UDim2.new(0, 2, 1, -4)
+    bar.Position = UDim2.new(0, 0, 0, 2)
     bar.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
     bar.BorderSizePixel = 0
     bar.Visible = false
     bar.Parent = btn
     
-    local barCorner = Instance.new("UICorner")
-    barCorner.CornerRadius = UDim.new(1, 0)
-    barCorner.Parent = bar
-    
+    -- Иконка
     local iconLbl = Instance.new("TextLabel")
-    iconLbl.Size = UDim2.new(0, 28, 1, 0)
-    iconLbl.Position = UDim2.new(0, 8, 0, 0)
+    iconLbl.Size = UDim2.new(0, 22, 1, 0)
+    iconLbl.Position = UDim2.new(0, 6, 0, 0)
     iconLbl.BackgroundTransparency = 1
     iconLbl.Text = icon
-    iconLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
-    iconLbl.TextSize = 15
+    iconLbl.TextColor3 = Color3.fromRGB(170, 170, 170)
+    iconLbl.TextSize = 14
     iconLbl.Font = Enum.Font.Gotham
     iconLbl.Parent = btn
     
+    -- Текст
     local textLbl = Instance.new("TextLabel")
-    textLbl.Size = UDim2.new(1, -45, 1, 0)
-    textLbl.Position = UDim2.new(0, 38, 0, 0)
+    textLbl.Size = UDim2.new(1, -34, 1, 0)
+    textLbl.Position = UDim2.new(0, 30, 0, 0)
     textLbl.BackgroundTransparency = 1
     textLbl.Text = name
-    textLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
-    textLbl.TextSize = 12
+    textLbl.TextColor3 = Color3.fromRGB(190, 190, 190)
+    textLbl.TextSize = 11
     textLbl.Font = Enum.Font.Gotham
     textLbl.TextXAlignment = Enum.TextXAlignment.Left
     textLbl.Parent = btn
-    
-    btn.MouseEnter:Connect(function()
-        if currentTab ~= name then
-            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.1}):Play()
-        end
-    end)
-    
-    btn.MouseLeave:Connect(function()
-        if currentTab ~= name then
-            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.3}):Play()
-        end
-    end)
     
     btn.MouseButton1Click:Connect(function()
         currentTab = name
@@ -229,10 +205,8 @@ local function CreateTab(name, icon, yPos, callback)
             if b:IsA("TextButton") then
                 local barItem = b:FindFirstChild("Bar")
                 if b.Name == name then
-                    b.BackgroundTransparency = 0.1
                     if barItem then barItem.Visible = true end
                 else
-                    b.BackgroundTransparency = 0.3
                     if barItem then barItem.Visible = false end
                 end
             end
@@ -577,7 +551,6 @@ ShowKeyPage()
 task.wait(0.05)
 local firstBtn = Sidebar:FindFirstChild("Key Access")
 if firstBtn then
-    firstBtn.BackgroundTransparency = 0.1
     local bar = firstBtn:FindFirstChild("Bar")
     if bar then bar.Visible = true end
 end
