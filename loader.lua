@@ -116,12 +116,20 @@ end
 
 -- Background key checker (runs every 60 seconds)
 local function startKeyChecker(currentKey, Window)
+    -- Создаем глобальную переменную для игровых скриптов
+    _G.AetherHubKeyValid = true
+    _G.AetherHubCheckKey = function()
+        local valid, expiresOrReason, keyType = verifyKey(currentKey)
+        return valid
+    end
+    
     task.spawn(function()
         while task.wait(60) do
             local valid, expiresOrReason, keyType = verifyKey(currentKey)
             
             if not valid then
                 warn("[Aether Hub] Key expired or invalid:", expiresOrReason)
+                _G.AetherHubKeyValid = false -- Сообщаем игровому скрипту
                 showExpiredScreen(Window)
                 break
             end
