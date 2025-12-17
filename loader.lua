@@ -613,19 +613,24 @@ function ShowGamePage(gameData)
         
         task.wait(0.3)
         
-        -- Шаг 1: Загружаем Rayfield ПЕРЕД скриптом игры (если еще не загружен)
-        if not _G.Rayfield then
-            local rayfieldSuccess = pcall(function()
-                local rayfieldCode = game:HttpGet('https://sirius.menu/rayfield', true)
-                _G.Rayfield = loadstring(rayfieldCode)()
-                _G.RayfieldInstance = _G.Rayfield
-            end)
-            
-            if not rayfieldSuccess or not _G.Rayfield then
-                warn("[Aether Hub] Failed to load Rayfield")
-                Notify("❌ Error", "UI library failed to load", 5)
-                return
+        -- Очищаем старый Rayfield UI если есть
+        pcall(function()
+            if _G.RayfieldInstance then
+                _G.RayfieldInstance:Destroy()
             end
+        end)
+        
+        -- Шаг 1: Загружаем Rayfield заново
+        local rayfieldSuccess = pcall(function()
+            local rayfieldCode = game:HttpGet('https://sirius.menu/rayfield', true)
+            _G.Rayfield = loadstring(rayfieldCode)()
+            _G.RayfieldInstance = _G.Rayfield
+        end)
+        
+        if not rayfieldSuccess or not _G.Rayfield then
+            warn("[Aether Hub] Failed to load Rayfield")
+            Notify("❌ Error", "UI library failed to load", 5)
+            return
         end
         
         task.wait(0.2)
