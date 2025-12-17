@@ -181,15 +181,8 @@ MinimizeBtn.Parent = TopBar
 MinimizeBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
     BlurEffect.Enabled = false
-    
     -- Уведомление
-    pcall(function()
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "Aether Hub",
-            Text = "Press Delete or Insert to open Hub again",
-            Duration = 5
-        })
-    end)
+    Notify("Interface Hidden", "Press Delete or Insert to open", 5)
 end)
 
 local MaximizeBtn = Instance.new("TextButton")
