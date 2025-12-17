@@ -1,5 +1,4 @@
--- Aether Hub v5.0 - EXACT Nexo Hub Clone
--- Perfect copy of Nexo Hub design
+-- Aether Hub v5.0 
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
@@ -95,7 +94,7 @@ local BlurEffect = Instance.new("BlurEffect")
 BlurEffect.Size = 20
 BlurEffect.Parent = game:GetService("Lighting")
 
--- Main Frame - ТОЧНЫЕ РАЗМЕРЫ КАК У NEXO
+-- Main Frame
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 710, 0, 450)
@@ -182,6 +181,15 @@ MinimizeBtn.Parent = TopBar
 MinimizeBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
     BlurEffect.Enabled = false
+    
+    -- Уведомление
+    pcall(function()
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Aether Hub",
+            Text = "Press Delete or Insert to open Hub again",
+            Duration = 5
+        })
+    end)
 end)
 
 local MaximizeBtn = Instance.new("TextButton")
@@ -777,4 +785,4 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
-warn("[Aether Hub] ✅ Loaded - Nexo Style!")
+warn("[Aether Hub] Loaded!")
