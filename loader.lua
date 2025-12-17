@@ -681,7 +681,7 @@ function ShowGamePage(gameData)
     end)
     
     local info = Instance.new("Frame")
-    info.Size = UDim2.new(1, 0, 0, 120)
+    info.Size = UDim2.new(1, 0, 0, 140)
     info.Position = UDim2.new(0, 0, 0, 101)
     info.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
     info.BackgroundTransparency = 0.4
@@ -704,7 +704,7 @@ function ShowGamePage(gameData)
     infot.Parent = info
     
     local infom = Instance.new("TextLabel")
-    infom.Size = UDim2.new(1, -14, 0, 80)
+    infom.Size = UDim2.new(1, -14, 0, 100)
     infom.Position = UDim2.new(0, 10, 0, 34)
     infom.BackgroundTransparency = 1
     infom.Text = "• Auto Collect Cash\n• Auto Rebirth\n• Auto Steal Brainrots with filtres: Price, Zones, Rariry\n• Auto Steal Lucky Blocks\n• Teleport To Zones, Base, Exit from Museum\n• Statistics tracking"
