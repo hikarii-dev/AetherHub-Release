@@ -506,7 +506,7 @@ local function ShowKeyPage()
     Btn("Get Key (Copy Discord Link)", "🔑", 93, function()
         if setclipboard then
             setclipboard(DISCORD_INVITE)
-            Notify("✅ Copied!", "Join Discord → #get-key", 4)
+            Notify("Link Copied", "Join Discord → #get-key", 4)
         else
             Notify("Join Discord", DISCORD_INVITE, 4)
         end
@@ -515,7 +515,7 @@ local function ShowKeyPage()
     Btn("Buy Permanent Key - Join Discord", "💰", 137, function()
         if setclipboard then
             setclipboard(DISCORD_INVITE)
-            Notify("✅ Link Copied", "Join Discord → #get-key", 4)
+            Notify("Link Copied", "Join Discord → #get-key", 4)
         else
             Notify("Join Discord", DISCORD_INVITE, 4)
         end
@@ -562,10 +562,10 @@ local function ShowKeyPage()
         end
     end)
     
-    Btn("Join Discord - Press to copy link", "🔗", 225, function()
+    Btn("Join Discord - Press to copy link", "📢", 225, function()
         if setclipboard then
             setclipboard(DISCORD_INVITE)
-            Notify("✅ Link Copied", "Join Discord → #get-key", 4)
+            Notify("Link Copied", "Join Discord → #get-key", 4)
         else
             Notify("Join Discord", DISCORD_INVITE, 4)
         end
