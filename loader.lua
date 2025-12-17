@@ -58,14 +58,19 @@ local function startKeyMonitor()
                     _G.AetherHubCurrentKey = ""
                     
                     -- Удаляем все вкладки игр из sidebar
-                    for _, child in pairs(Sidebar:GetChildren()) do
-                        if child:IsA("TextButton") and child.Name ~= "Key Access" then
-                            child:Destroy()
+                    local sidebarFrame = _G.AetherHub_Sidebar
+                    if sidebarFrame then
+                        for _, child in pairs(sidebarFrame:GetChildren()) do
+                            if child:IsA("TextButton") and child.Name ~= "Key Access" then
+                                child:Destroy()
+                            end
                         end
                     end
                     
                     -- Возвращаемся на страницу Key Access
-                    ShowKeyPage()
+                    if _G.AetherHub_ShowKeyPage then
+                        _G.AetherHub_ShowKeyPage()
+                    end
                     
                     -- Уведомление
                     Notify("⚠️ Key Expired", "Please enter a new key", 5)
@@ -240,6 +245,10 @@ Content.Size = UDim2.new(1, -220, 1, -35)
 Content.Position = UDim2.new(0, 220, 0, 35)
 Content.BackgroundTransparency = 1
 Content.Parent = MainFrame
+
+-- Глобальные переменные для доступа из функций
+_G.AetherHub_Sidebar = Sidebar
+_G.AetherHub_Content = Content
 
 -- ===================================
 -- SIDEBAR BUTTON
@@ -613,12 +622,23 @@ function ShowGamePage(gameData)
         
         task.wait(0.3)
         
-        -- Очищаем старый Rayfield UI если есть
+        -- Полностью очищаем старый Rayfield UI
         pcall(function()
             if _G.RayfieldInstance then
                 _G.RayfieldInstance:Destroy()
+                _G.RayfieldInstance = nil
+            end
+            
+            -- Удаляем все Rayfield GUI из CoreGui
+            local coreGui = game:GetService("CoreGui")
+            for _, gui in pairs(coreGui:GetChildren()) do
+                if gui.Name == "Rayfield" or gui.Name:find("Rayfield") then
+                    gui:Destroy()
+                end
             end
         end)
+        
+        task.wait(0.2)
         
         -- Шаг 1: Загружаем Rayfield заново
         local rayfieldSuccess = pcall(function()
@@ -690,6 +710,7 @@ end
 -- INIT
 -- ===================================
 
+_G.AetherHub_ShowKeyPage = ShowKeyPage
 CreateTab("Key Access", "🔑", 6, ShowKeyPage)
 ShowKeyPage()
 
