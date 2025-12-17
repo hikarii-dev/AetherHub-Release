@@ -55,22 +55,22 @@ local function startKeyMonitor()
                     warn("[Aether Hub] Key invalid! Reason:", reason)
                     _G.AetherHubKeyValid = false
                     _G.ScriptRunning = false
+                    _G.AetherHubCurrentKey = ""
                     
-                    -- Закрываем все
-                    pcall(function()
-                        BlurEffect:Destroy()
-                        ScreenGui:Destroy()
-                    end)
+                    -- Удаляем все вкладки игр из sidebar
+                    for _, child in pairs(Sidebar:GetChildren()) do
+                        if child:IsA("TextButton") and child.Name ~= "Key Access" then
+                            child:Destroy()
+                        end
+                    end
+                    
+                    -- Возвращаемся на страницу Key Access
+                    ShowKeyPage()
                     
                     -- Уведомление
-                    pcall(function()
-                        game:GetService("StarterGui"):SetCore("SendNotification", {
-                            Title = "⚠️ Aether Hub",
-                            Text = "Key expired! Hub closed.",
-                            Duration = 10
-                        })
-                    end)
+                    Notify("⚠️ Key Expired", "Please enter a new key", 5)
                     
+                    warn("[Aether Hub] Key expired - returned to Key Access page")
                     break
                 end
             end
@@ -524,17 +524,22 @@ local function ShowKeyPage()
         if valid then
             _G.AetherHubKeyValid = true
             _G.AetherHubCurrentKey = key
-            
-            Notify("✅ Valid!", "Key verified", 3)
+            _G.ScriptRunning = true
             
             -- Запускаем мониторинг ключа
             startKeyMonitor()
             
+            -- Добавляем игры мгновенно
             for i, g in ipairs(GAMES) do
                 CreateTab(g.name, g.icon, 48, function()
                     ShowGamePage(g)
                 end)
             end
+            
+            -- Уведомление показываем сразу
+            task.spawn(function()
+                Notify("✅ Valid!", "Key verified", 3)
+            end)
         else
             local err = "Invalid key"
             if reason == "not_found" then
@@ -598,6 +603,12 @@ function ShowGamePage(gameData)
     end)
     
     activate.MouseButton1Click:Connect(function()
+        -- Проверяем валидность ключа ПЕРЕД запуском
+        if not _G.AetherHubKeyValid or not _G.ScriptRunning then
+            Notify("❌ Error", "Key expired! Enter new key", 4)
+            return
+        end
+        
         Notify("⏳ Loading...", "Please wait...", 2)
         
         task.wait(0.3)
