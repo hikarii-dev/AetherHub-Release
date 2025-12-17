@@ -37,6 +37,47 @@ local function verifyKey(key, gameId)
     return response.valid, response.reason or response.message
 end
 
+-- Глобальные переменные для ключа
+_G.AetherHubKeyValid = false
+_G.AetherHubCurrentKey = ""
+_G.ScriptRunning = true
+
+-- Функция фоновой проверки ключа
+local function startKeyMonitor()
+    task.spawn(function()
+        while _G.ScriptRunning do
+            task.wait(10) -- Проверка каждые 10 секунд
+            
+            if _G.AetherHubCurrentKey ~= "" then
+                local valid, reason = verifyKey(_G.AetherHubCurrentKey, GAMES[1].id)
+                
+                if not valid then
+                    warn("[Aether Hub] Key invalid! Reason:", reason)
+                    _G.AetherHubKeyValid = false
+                    _G.ScriptRunning = false
+                    
+                    -- Закрываем все
+                    pcall(function()
+                        BlurEffect:Destroy()
+                        ScreenGui:Destroy()
+                    end)
+                    
+                    -- Уведомление
+                    pcall(function()
+                        game:GetService("StarterGui"):SetCore("SendNotification", {
+                            Title = "⚠️ Aether Hub",
+                            Text = "Key expired! Hub closed.",
+                            Duration = 10
+                        })
+                    end)
+                    
+                    break
+                end
+            end
+        end
+    end)
+end
+
 -- Create ScreenGui
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "AetherHub"
@@ -481,7 +522,13 @@ local function ShowKeyPage()
         local valid, reason = verifyKey(key, GAMES[1].id)
         
         if valid then
+            _G.AetherHubKeyValid = true
+            _G.AetherHubCurrentKey = key
+            
             Notify("✅ Valid!", "Key verified", 3)
+            
+            -- Запускаем мониторинг ключа
+            startKeyMonitor()
             
             for i, g in ipairs(GAMES) do
                 CreateTab(g.name, g.icon, 48, function()
