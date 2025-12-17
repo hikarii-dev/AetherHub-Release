@@ -503,7 +503,7 @@ local function ShowKeyPage()
         b.MouseButton1Click:Connect(cb)
     end
     
-    Btn("Get Key (Copy Discord)", "🔑", 93, function()
+    Btn("Get Key (Copy Discord Link)", "🔑", 93, function()
         if setclipboard then
             setclipboard(DISCORD_INVITE)
             Notify("✅ Copied!", "Join Discord → #get-key", 4)
@@ -512,10 +512,12 @@ local function ShowKeyPage()
         end
     end)
     
-    Btn("Buy Permanent Key", "💰", 137, function()
+    Btn("Buy Permanent Key - Join Discord", "💰", 137, function()
         if setclipboard then
             setclipboard(DISCORD_INVITE)
-            Notify("💎 Premium", "$5/mo, $10/3mo", 5)
+            Notify("✅ Link Copied", "Join Discord → #get-key", 4)
+        else
+            Notify("Join Discord", DISCORD_INVITE, 4)
         end
     end)
     
@@ -557,6 +559,15 @@ local function ShowKeyPage()
                 err = reason
             end
             Notify("❌ " .. err, "Check key", 4)
+        end
+    end)
+    
+    Btn("Join Discord - Press to copy link", "🔗", 225, function()
+        if setclipboard then
+            setclipboard(DISCORD_INVITE)
+            Notify("✅ Link Copied", "Join Discord → #get-key", 4)
+        else
+            Notify("Join Discord", DISCORD_INVITE, 4)
         end
     end)
 end
@@ -696,7 +707,7 @@ function ShowGamePage(gameData)
     infom.Size = UDim2.new(1, -14, 0, 46)
     infom.Position = UDim2.new(0, 10, 0, 34)
     infom.BackgroundTransparency = 1
-    infom.Text = "✅ Auto Collect Cash\n✅ Auto Rebirth\n✅ Auto Steal & more!"
+    infom.Text = "• Auto-farm cash & rebirth system\n• Smart artifact stealing with filters\n• Teleportation & statistics tracking"
     infom.TextColor3 = Color3.fromRGB(170, 170, 170)
     infom.TextSize = 15
     infom.Font = Enum.Font.Gotham
