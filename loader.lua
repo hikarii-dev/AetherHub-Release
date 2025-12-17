@@ -528,7 +528,7 @@ local function ShowKeyPage()
             return
         end
         
-        Notify("⏳ Verifying...", "Please wait...", 2)
+        Notify("Verifying...", "Please wait...", 2)
         
         local valid, reason = verifyKey(key, GAMES[1].id)
         
