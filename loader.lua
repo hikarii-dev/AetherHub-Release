@@ -696,7 +696,7 @@ function ShowGamePage(gameData)
     infot.Size = UDim2.new(1, -14, 0, 20)
     infot.Position = UDim2.new(0, 10, 0, 8)
     infot.BackgroundTransparency = 1
-    infot.Text = "ℹ️ Script Info"
+    infot.Text = "Script Info"
     infot.TextColor3 = Color3.fromRGB(255, 255, 255)
     infot.TextSize = 20
     infot.Font = Enum.Font.GothamBold
@@ -707,7 +707,7 @@ function ShowGamePage(gameData)
     infom.Size = UDim2.new(1, -14, 0, 46)
     infom.Position = UDim2.new(0, 10, 0, 34)
     infom.BackgroundTransparency = 1
-    infom.Text = "• Auto-farm cash & rebirth system\n• Smart artifact stealing with filters\n• Teleportation & statistics tracking"
+    infom.Text = "• Auto Collect Cash\n• Auto Rebirth\n• Auto Steal Brainrots with filtres: Price, Zones, Rariry\n• Auto Steal Lucky Blocks\n• Teleport To Zones, Base, Exit from Museum\n• Statistics tracking"
     infom.TextColor3 = Color3.fromRGB(170, 170, 170)
     infom.TextSize = 15
     infom.Font = Enum.Font.Gotham
