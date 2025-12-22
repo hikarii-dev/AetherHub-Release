@@ -1,0 +1,15 @@
+{
+  "name": "aether-hub-api",
+  "version": "3.0.0",
+  "description": "Simple key management API for Aether Hub",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["api", "keys", "roblox"],
+  "author": "hikarii.dev",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
